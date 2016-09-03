@@ -7,6 +7,9 @@
 *.userosscache
 *.sln.docstates
 *Settings.cs
+/*Settings.cs
+/GlobalSettings.cs
+/SQU1RR3L/GlobalSettings.cs
 
 
 # User-specific files (MonoDevelop/Xamarin Studio)
