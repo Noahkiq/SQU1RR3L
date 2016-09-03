@@ -1,6 +1,9 @@
 # SQU1RR3L
-Discord Bot written in C# for a private server. Feel free to run it for yourself by placing your bot token into `/SQU1RR3L/token.config`
+Discord Bot written in C# (using https://github.com/RogueException/Discord.Net) for https://discord.gg/fjHhjGs
 
-Bot lang is available at https://github.com/RogueException/Discord.Net
+##Running the bot
+Just put your token in `SQU1RR3L/token.config`, open the project in Visual Studio, and compile it.
 
-also thanks to Julien12150 for helping me get the token config working
+##Misc.
+
+Thanks to Julien12150 for helping me get the token config working ~~because I'm dumb~~
