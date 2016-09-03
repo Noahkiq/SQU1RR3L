@@ -7,6 +7,7 @@ using Discord;
 using Discord.Commands;
 using Discord.Modules;
 using Discord.Audio;
+using System.IO;
 
 class Program
 {
@@ -63,8 +64,9 @@ class Program
             await logChannel.SendMessage($"oops i fukd {e.After.Name}'s mum xddd");
         };
 
+        string token = File.ReadAllText("token.config");
         _client.ExecuteAndWait(async () => {
-            await _client.Connect(SQU1RR3L.GlobalSettings.token);
+            await _client.Connect(token);
         });
     }
 }
