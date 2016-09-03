@@ -11,13 +11,13 @@ also thanks visual studio for being annoying
 If you want to run this bot for whatever reason, just put your token in `SQU1RR3L/token.config`, open the project in Visual Studio, and compile it.
 
 ##Commands
-`help` - Lists the commands.
 
-`greet (@mention)` - Greets a person. | Aliases: `gr`, `hi`
-
-`bork` - ＭＡＸＩＭＵＭ　ＢＯＲＫＤＲＩＶＥ | Aliases: `maximumbork`, `borkdrive`, `maximumborkdrive`
-
-`sigh` - SiIvaGunner Emojipasta. | Alias: `psy`
+| Command  | Description | Example | Alias(es) |
+| ------------- | ------------- | ------------- | ------------- |
+| help  | Lists the commands.  | *help | N/A |
+| greet \<user> | Greets a person.  | *greet @Noahkiq | `gr`, `hi` |
+| bork | MAXIMUM BORKDRIVE | *bork | `maximumbork`, `borkdrive`, `maximumborkdrive` |
+| sigh | SiIvaGunner Emojipasta. | *sigh | `psy` |
 
 
 ###Prefixes
