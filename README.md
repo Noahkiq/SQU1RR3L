@@ -13,20 +13,11 @@ If you want to run this bot for whatever reason, just put your token in `SQU1RR3
 ##Commands
 `help` - Lists the commands.
 
+`greet (@mention)` - Greets a person. | Aliases: `gr`, `hi`
 
-`greet (@mention)` - Greets a person.
+`bork` - ＭＡＸＩＭＵＭ　ＢＯＲＫＤＲＩＶＥ | Aliases: `maximumbork`, `borkdrive`, `maximumborkdrive`
 
-Aliases: `gr`, `hi`
-
-
-`bork` - ＭＡＸＩＭＵＭ　ＢＯＲＫＤＲＩＶＥ
-
-Aliases: `maximumbork`, `borkdrive`, `maximumborkdrive`
-
-
-`sigh` - SiIvaGunner Emojipasta.
-
-Alias: `psy`
+`sigh` - SiIvaGunner Emojipasta. | Alias: `psy`
 
 
 ###Prefixes
