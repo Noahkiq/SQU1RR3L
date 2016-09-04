@@ -22,6 +22,9 @@ If you want to run this bot for whatever reason, just put your token in `SQU1RR3
 | sigh | SiIvaGunner Emojipasta. | *sigh | `psy` |
 | invite | Posts the link to get SQU1RR3L on your server. | *invite | `joinserver`, `join` |
 | oh | oh | *oh | N/A |
+| ban \<user> | Bans a user. **Currently broken.** | *ban @Noahkiq | N/A |
+| emojiseals | Navy seals emojipasta. | *emojiseals | N/A |
+| goodshit | That's some good shit right there 👌 | *goodshit | N/A |
 
 
 ###Prefixes
@@ -33,3 +36,7 @@ These special commands have their own prefixes (or have none at all) which is th
 | Command  | Response |
 | ------------- | ------------- |
 | lo;  | lol good grammar noob |
+
+###Logging
+
+If you create a channel named `#squirrel-log`, the bot will post when users are (un)banned, join, or leave.
