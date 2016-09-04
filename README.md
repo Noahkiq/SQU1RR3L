@@ -21,7 +21,15 @@ If you want to run this bot for whatever reason, just put your token in `SQU1RR3
 | bork | MAXIMUM BORKDRIVE | *bork | `maximumbork`, `borkdrive`, `maximumborkdrive` |
 | sigh | SiIvaGunner Emojipasta. | *sigh | `psy` |
 | invite | Posts the link to get SQU1RR3L on your server. | *invite | `joinserver`, `join` |
+| oh | oh | *oh | N/A |
 
 
 ###Prefixes
 The prefixes by default are mentioning the bot and `*`. Ex. `@SQU1RR3L help` or `*help`
+
+###Special Commands
+These special commands have their own prefixes (or have none at all) which is they're kept seperate from the above table.
+
+| Command  | Response |
+| ------------- | ------------- |
+| lo;  | lol good grammar noob |
