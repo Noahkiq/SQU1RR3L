@@ -77,15 +77,36 @@ class Program
                     //sends a message to channel with the given text
                 });
 
-        // Register a Hook into the UserUpdated event using a Lambda
-        _client.UserUpdated += async (s, e) => {
-            // Check that the user is in a Voice channel
-            if (e.After.VoiceChannel == null) return;
+        // Register a Hook into the UserBanned event using a Lambda
+        _client.UserBanned += async (s, e) => {
+            // Create a Channel object by searching for a channel named '#logs' on the server the ban occurred in.
+            var logChannel = e.Server.FindChannels("squirrel-log").FirstOrDefault();
+            // Send a message to the server's log channel, stating that a user was banned.
+            await logChannel.SendMessage($"{e.User.Name} was banned from the server.");
+        };
 
-            // See if they changed Voice channels
-            if (e.Before.VoiceChannel == e.After.VoiceChannel) return;
-            var logChannel = e.Server.FindChannels("trash-bin").FirstOrDefault();
-            await logChannel.SendMessage($"oops i fukd {e.After.Name}'s mum xddd");
+        // Register a Hook into the UserUnanned event using a Lambda
+        _client.UserUnbanned += async (s, e) => {
+            // Create a Channel object by searching for a channel named '#squirrel-log' on the server the ban occurred in.
+            var logChannel = e.Server.FindChannels("squirrel-log").FirstOrDefault();
+            // Send a message to the server's log channel, stating that a user was unbanned.
+            await logChannel.SendMessage($"{e.User.Name} was unbanned from the server.");
+        };
+
+        // Register a Hook into the UserJoined event using a Lambda
+        _client.UserJoined += async (s, e) => {
+            // Create a Channel object by searching for a channel named '#squirrel-log' on the server the ban occurred in.
+            var logChannel = e.Server.FindChannels("squirrel-log").FirstOrDefault();
+            // Send a message to the server's log channel, stating that a user was unbanned.
+            await logChannel.SendMessage($"{e.User.Name} joined the server.");
+        };
+
+        // Register a Hook into the UserUnanned event using a Lambda
+        _client.UserLeft += async (s, e) => {
+            // Create a Channel object by searching for a channel named '#squirrel-log' on the server the ban occurred in.
+            var logChannel = e.Server.FindChannels("squirrel-log").FirstOrDefault();
+            // Send a message to the server's log channel, stating that a user was unbanned.
+            await logChannel.SendMessage($"{e.User.Name} left the server.");
         };
 
         string token = File.ReadAllText("token.config");
