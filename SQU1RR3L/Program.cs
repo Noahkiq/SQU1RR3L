@@ -18,11 +18,18 @@ class Program
     public void Start()
     {
         _client = new DiscordClient();
+        Console.WriteLine("Booting up bot...");
 
         _client.UsingCommands(x => {
             x.PrefixChar = '*';
             x.HelpMode = HelpMode.Public;
         });
+
+        _client.MessageReceived += async (s, e) =>
+        {
+            if (e.Message.Text == "lo;")
+                await e.Channel.SendMessage("lol good grammar noob");
+        };
 
         //Since we have setup our CommandChar to be '*', we will run this command by typing *greet
         _client.GetService<CommandService>().CreateCommand("greet") //create command greet
@@ -32,9 +39,9 @@ class Program
                 .Do(async e =>
                 {
                     await e.Channel.SendMessage($"{e.User.Name} greets {e.GetArg("GreetedPerson")}");
-            //sends a message to channel with the given text
-        });
-        
+                    //sends a message to channel with the given text
+                });
+
         _client.GetService<CommandService>().CreateCommand("bork") //create command greet
                 .Alias(new string[] { "maximumbork", "borkdrive", "maximumborkdrive" }) //add aliases
                 .Description("ＭＡＸＩＭＵＭ　ＢＯＲＫＤＲＩＶＥ") //add description, it will be shown when *help is used
@@ -53,6 +60,23 @@ class Program
                     //sends a message to channel with the given text
                 });
 
+        _client.GetService<CommandService>().CreateCommand("invite") //create command
+                .Alias(new string[] { "joinserver", "join" }) //add aliases
+                .Description("Posts the link to get the bot on your server.") //add description, it will be shown when *help is used
+                .Do(async e =>
+                {
+                    await e.Channel.SendMessage($"You can add me to your server using https://discordapp.com/oauth2/authorize?client_id=215591038855675904&scope=bot - make sure you have `Manage Server` permissions!");
+                    //sends a message to channel with the given text
+                });
+
+        _client.GetService<CommandService>().CreateCommand("oh") //create command
+                .Description("oh") //add description, it will be shown when *help is used
+                .Do(async e =>
+                {
+                    await e.Channel.SendMessage($"oh");
+                    //sends a message to channel with the given text
+                });
+
         // Register a Hook into the UserUpdated event using a Lambda
         _client.UserUpdated += async (s, e) => {
             // Check that the user is in a Voice channel
@@ -67,6 +91,7 @@ class Program
         string token = File.ReadAllText("token.config");
         _client.ExecuteAndWait(async () => {
             await _client.Connect(token);
+            _client.SetGame("*invite");
         });
     }
 }
