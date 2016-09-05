@@ -95,31 +95,29 @@ class Program
                     //sends a message to channel with the given text
                 });
 
-        _client.GetService<CommandService>().CreateCommand("userinfo") //create command
-                .Description("Displays a user's info.") //add description, it will be shown when *help is used
+        _client.GetService<CommandService>().CreateCommand("info")
+                .Description("Info of user")
+                .Parameter("User", ParameterType.Optional)
                 .Do(async e =>
                 {
-                    await e.Channel.SendMessage($"```css\nID: {e.User.Id}\n```");
-                    //sends a message to channel with the given text
-                });
+                    string mension = e.GetArg("User");
+                    ulong id = e.User.Id;
+                    string username = e.User.Name;
+                    string avatar = e.User.AvatarUrl;
+                    if (e.GetArg("User") != "")
+                    {
+                        if (mension.Contains("!"))
+                            id = ulong.Parse(mension.Split('!')[1].Split('>')[0]);
+                        else
+                            id = ulong.Parse(mension.Split('@')[1].Split('>')[0]);
 
-        _client.GetService<CommandService>().CreateCommand("ban") //create command
-                .Description("Bans a user.") //add description, it will be shown when *help is used
-                .Parameter("MentionedUser", ParameterType.Required) //argument
-                .Do(async e =>
-                {
-                    // Find a User's Channel Permissions
-                    if (e.User.Id != 140564059417346049)
-                    {
-                        await e.Channel.SendMessage("You do not have access to this command.");
+                        username = e.Server.GetUser(id).Name;
+                        avatar = e.Server.GetUser(id).AvatarUrl;
                     }
-                    else
-                    {
-                        //Discord.User _user = (Discord.User)e.Message.MentionedUsers;
-                        await e.Channel.SendMessage("nothing has happened go home");
-                        //await e.Server.Ban(_user, 30);
-                        //sends a message to channel with the given text
-                    }
+
+                    await e.Channel.SendMessage($"```\nID:       {id}\n" + 
+                                                     $"Username: {username}\n```" + 
+                                                     $"\n{avatar}\n");
                 });
 
         // Register a Hook into the UserBanned event using a Lambda
