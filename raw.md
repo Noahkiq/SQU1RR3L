@@ -15,6 +15,7 @@ You can add your bot to your discord server using [this URL](https://discordapp.
 | oh            | oh                              | *oh             | N/A                                            |
 | emojiseals    | Navy seals emojipasta.          | *emojiseals     | N/A                                            |
 | goodshit      | That's some good shit 👌        | *goodshit       | N/A                                            |
+| info          | Displays info about a user.     | *info           | N/A                                            |
 
 #### Prefixes
 You can use either `*` or `@SQU1RR3L` as a prefix for the bot.
@@ -31,4 +32,4 @@ The bot will automatically post bans, unbans, joins, and leaves in the `#squirre
 @Julien12150 helped with making token.config work correctly.
 
 ### SQU1RR3L Hub
-You can join the SQU1RR3L Hub discord server to suggest new features or report issues. [Click here to join!](https://discord.gg/wBmEsS3)
+You can join the SQU1RR3L Hub discord server to suggest new features or report issues. [Click here to join!](https://discord.gg/fUQKCQX)
