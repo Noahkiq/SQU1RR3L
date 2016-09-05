@@ -38,7 +38,7 @@ class Program
                 .Parameter("GreetedPerson", ParameterType.Required) //as an argument, we have a person we want to greet
                 .Do(async e =>
                 {
-                    await e.Channel.SendMessage($"{e.User.Name} greets {e.GetArg("GreetedPerson")}");
+                    await e.Channel.SendMessage($"<@{e.User.Id}> greets {e.GetArg("GreetedPerson")}");
                     //sends a message to channel with the given text
                 });
 
