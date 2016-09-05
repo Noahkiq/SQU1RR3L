@@ -113,8 +113,8 @@ class Program
                     }
 
                     await e.Channel.SendMessage($"```\nID:       {id}\n" + 
-                                                     $"Username: {username}\n " + 
-                                                     $"{avatar}\n```");
+                                                     $"Username: {username}\n```" + 
+                                                     $"\n{avatar}\n");
                 });
 
         // Register a Hook into the UserBanned event using a Lambda
