@@ -15,7 +15,7 @@ You can add your bot to your discord server using [this URL](https://discordapp.
 | oh            | oh                              | *oh             | N/A                                            |
 | emojiseals    | Navy seals emojipasta.          | *emojiseals     | N/A                                            |
 | goodshit      | That's some good shit 👌        | *goodshit       | N/A                                            |
-| info          | Displays info about a user.     | *info           | N/A                                            |
+| info          | Displays info about a user.     | *info           | *userinfo                                      |
 
 #### Prefixes
 You can use either `*` or `@SQU1RR3L` as a prefix for the bot.
