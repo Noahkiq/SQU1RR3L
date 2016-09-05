@@ -98,20 +98,23 @@ class Program
                 .Do(async e =>
                 {
                     string mension = e.GetArg("User");
-                    string id = null;
+                    ulong id = e.User.Id;
+                    string username = e.User.Name;
+                    string avatar = e.User.AvatarUrl;
                     if (e.GetArg("User") != "")
                     {
                         if (mension.Contains("!"))
-                            id = mension.Split('!')[1].Split('>')[0];
+                            id = ulong.Parse(mension.Split('!')[1].Split('>')[0]);
                         else
-                            id = mension.Split('@')[1].Split('>')[0];
-                    }
-                    else
-                    {
-                        id = e.User.Id.ToString();
+                            id = ulong.Parse(mension.Split('@')[1].Split('>')[0]);
+
+                        username = e.Server.GetUser(id).Name;
+                        avatar = e.Server.GetUser(id).AvatarUrl;
                     }
 
-                    await e.Channel.SendMessage($"```\nID: {id}\n```");
+                    await e.Channel.SendMessage($"```\nID:       {id}\n" + 
+                                                     $"Username: {username}\n " + 
+                                                     $"{avatar}\n```");
                 });
 
         // Register a Hook into the UserBanned event using a Lambda
