@@ -27,8 +27,10 @@ class Program
 
         _client.MessageReceived += async (s, e) =>
         {
-            if (e.Message.Text == "lo;")
+            if (e.Message.Text.ToLower().Contains("lo;"))
                 await e.Channel.SendMessage("lol good grammar noob");
+            else if (e.Message.Text == "ayy")
+                await e.Channel.SendMessage("lmao");
         };
 
         //Since we have setup our CommandChar to be '*', we will run this command by typing *greet
@@ -78,7 +80,7 @@ class Program
                 });
 
         _client.GetService<CommandService>().CreateCommand("emojiseals") //create command
-                .Description("Naxy Seals Emojipasta") //add description, it will be shown when *help is used
+                .Description("Navy Seals Emojipasta") //add description, it will be shown when *help is used
                 .Do(async e =>
                 {
                     await e.Channel.SendMessage($"❔What❔the fuck 😡😡 did you just fucking say about me, you little 🐕bitch🐕? I’ll have you know I graduated 🎓🎓 top🔝 of my class in the 🚢Navy🚢 Seals, and I’ve been involved in numerous 😯secret😯 raids on Al-Quaeda, and I have over❗❗ 300 ❗❗ confirmed 💀 kills 💀. I am trained in gorilla 🐒🐒 💥warfare 💥 and I’m the 🔝top🔝 sniper in the entire US 🔫 armed 🔫 forces 👮👮👮. You are nothing to me but just 🎯 another 🎯 target 🎯. I will wipe ❌ you ❌ the ❌ fuck ❌ out with 👀 precision 🎯🎯 the likes of which has never been 👀 seen 👀 before on this 🌎Earth🌎, mark 😡 my 😡 fucking 😡 words 😡. You think you can 👀 get away 👀with saying that shit to me over the Internet 💻? Think again, fucker. 👎👎👎 As we speak I am contacting my 🌐 secret network 🌐 of spies 👀👀👀 across the USA and your IP 🌐 is being traced 🕖 right now 🕧 so you better prepare for the ☔storm ☔, maggot 🐛🐛🐛. The storm ⚡⚡⚡ that wipes out the 😂 pathetic 😂 little thing you call your life. You’re 💀 fucking 💀💀💀 dead 💀💀💀, kid. I can be anywhere 🌎🌏🌍, anytime 🕧🕕🕦, and I can 💀 kill 💀 you💀 in over 🔢 seven 🔢 hundred 🔢 ways 📃, and that’s just with my ✋✋ bare hands✋✋. Not only am I extensively trained in 👊unarmed 👊 combat 👊, but I have access to the entire arsenal 🔫🔫🔫 of the United States 👮👮👮 Marine Corps 👮👮👮 and I will use it to its full extent to 💀 wipe 💀 your 💀 miserable 💀 ass 💀 off the face of the continent 🌎🌎, you little 💩shit 💩. If only you could have known 😵😵 what 😈unholy 😈 retribution your little “clever” comment 📄📄 was about to 👎bring 👎 down 👎 upon you, maybe you would have held your fucking tongue👅👅👅. But you couldn’t ❌, you didn’t❌, and now you’re paying the price💲💲💲, you goddamn idiot. I will 💩 shit 💩 fury 😡😡😡 all over you and you will 😱😱😱 drown 😱😱😱in it. You’re 💀 fucking 💀 dead 💀, kiddo. 💀💀💀");
@@ -91,6 +93,33 @@ class Program
                 {
                     await e.Channel.SendMessage($"👌👀👌👀👌👀👌👀👌👀 good shit go౦ԁ sHit👌 thats ✔ some good👌👌shit right👌👌there👌👌👌 right✔there ✔✔if i do ƽaү so my self 💯 i say so 💯 thats what im talking about right there right there (chorus: ʳᶦᵍʰᵗ ᵗʰᵉʳᵉ) mMMMMᎷМ💯 👌👌 👌НO0ОଠOOOOOОଠଠOoooᵒᵒᵒᵒᵒᵒᵒᵒᵒ👌 👌👌 👌 💯 👌 👀 👀 👀 👌👌Good shit");
                     //sends a message to channel with the given text
+                });
+
+        _client.GetService<CommandService>().CreateCommand("userinfo") //create command
+                .Description("Displays a user's info.") //add description, it will be shown when *help is used
+                .Do(async e =>
+                {
+                    await e.Channel.SendMessage($"```css\nID: {e.User.Id}\n```");
+                    //sends a message to channel with the given text
+                });
+
+        _client.GetService<CommandService>().CreateCommand("ban") //create command
+                .Description("Bans a user.") //add description, it will be shown when *help is used
+                .Parameter("MentionedUser", ParameterType.Required) //argument
+                .Do(async e =>
+                {
+                    // Find a User's Channel Permissions
+                    if (e.User.Id != 140564059417346049)
+                    {
+                        await e.Channel.SendMessage("You do not have access to this command.");
+                    }
+                    else
+                    {
+                        //Discord.User _user = (Discord.User)e.Message.MentionedUsers;
+                        await e.Channel.SendMessage("nothing has happened go home");
+                        //await e.Server.Ban(_user, 30);
+                        //sends a message to channel with the given text
+                    }
                 });
 
         // Register a Hook into the UserBanned event using a Lambda
