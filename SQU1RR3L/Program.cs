@@ -96,7 +96,8 @@ class Program
                 });
 
         _client.GetService<CommandService>().CreateCommand("info")
-                .Description("Info of user")
+                .Alias(new string[] { "userinfo" }) //add aliases
+                .Description("Displays info about a user.")
                 .Parameter("User", ParameterType.Optional)
                 .Do(async e =>
                 {
