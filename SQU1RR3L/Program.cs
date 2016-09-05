@@ -38,10 +38,9 @@ class Program
                 .Parameter("GreetedPerson", ParameterType.Required) //as an argument, we have a person we want to greet
                 .Do(async e =>
                 {
-                    await e.Channel.SendMessage($"<@{e.User.Id}> greets {e.GetArg("GreetedPerson")}");
+                    await e.Channel.SendMessage($"{e.User.Mention} greets {e.GetArg("GreetedPerson")}");
                     //sends a message to channel with the given text
                 });
-
         _client.GetService<CommandService>().CreateCommand("bork") //create command greet
                 .Alias(new string[] { "maximumbork", "borkdrive", "maximumborkdrive" }) //add aliases
                 .Description("ＭＡＸＩＭＵＭ　ＢＯＲＫＤＲＩＶＥ") //add description, it will be shown when *help is used
@@ -91,6 +90,20 @@ class Program
                 {
                     await e.Channel.SendMessage($"👌👀👌👀👌👀👌👀👌👀 good shit go౦ԁ sHit👌 thats ✔ some good👌👌shit right👌👌there👌👌👌 right✔there ✔✔if i do ƽaү so my self 💯 i say so 💯 thats what im talking about right there right there (chorus: ʳᶦᵍʰᵗ ᵗʰᵉʳᵉ) mMMMMᎷМ💯 👌👌 👌НO0ОଠOOOOOОଠଠOoooᵒᵒᵒᵒᵒᵒᵒᵒᵒ👌 👌👌 👌 💯 👌 👀 👀 👀 👌👌Good shit");
                     //sends a message to channel with the given text
+                });
+        _client.GetService<CommandService>().CreateCommand("info")
+                .Description("Info of user")
+                .Parameter("User", ParameterType.Required)
+                .Do(async e =>
+                {
+                    string mension = e.GetArg("User");
+                    string id = null;
+                    if (mension.Contains("!"))
+                        id = mension.Split('!')[1].Split('>')[0];
+                    else
+                        id = mension.Split('@')[1].Split('>')[0];
+
+                    await e.Channel.SendMessage($"ID: {id}");
                 });
 
         // Register a Hook into the UserBanned event using a Lambda
