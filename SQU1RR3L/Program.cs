@@ -25,6 +25,8 @@ class Program
             x.HelpMode = HelpMode.Public;
         });
 
+        _client.Log.Message += (s, e) => Console.WriteLine($"[{e.Severity}] {e.Source}: {e.Message}");
+
         _client.MessageReceived += async (s, e) =>
         {
             if (e.Message.Text.ToLower().Contains("lo;"))
@@ -105,6 +107,7 @@ class Program
                     ulong id = e.User.Id;
                     string username = e.User.Name;
                     string avatar = e.User.AvatarUrl;
+                    Discord.User roles = (Discord.User)e.User.Roles;
                     if (e.GetArg("User") != "")
                     {
                         if (mension.Contains("!"))
@@ -114,10 +117,12 @@ class Program
 
                         username = e.Server.GetUser(id).Name;
                         avatar = e.Server.GetUser(id).AvatarUrl;
+                        roles = (Discord.User)e.Server.GetUser(id).Roles;
                     }
 
-                    await e.Channel.SendMessage($"```\nID:       {id}\n" + 
-                                                     $"Username: {username}\n```" + 
+                    await e.Channel.SendMessage($"```\nID:       {id}\n" +
+                                                     $"Username: {username}\n" +
+                                                     $"Roles: {roles}\n```" +
                                                      $"\n{avatar}\n");
                 });
 
@@ -155,7 +160,7 @@ class Program
 
         string token = File.ReadAllText("token.config");
         _client.ExecuteAndWait(async () => {
-            await _client.Connect(token);
+            await _client.Connect("Bot " + token);
             _client.SetGame("*invite");
         });
     }
