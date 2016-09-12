@@ -29,10 +29,17 @@ class Program
 
         _client.MessageReceived += async (s, e) =>
         {
-            if (e.Message.Text.ToLower().Contains("lo;"))
-                await e.Channel.SendMessage("lol good grammar noob");
-            else if (e.Message.Text == "ayy")
-                await e.Channel.SendMessage("lmao");
+            if (!e.Message.IsAuthor)
+            {
+                if (e.Message.Text.ToLower().Contains("lo;"))
+                    await e.Channel.SendMessage("lol good grammar noob");
+                else if (e.Message.Text == "ayy")
+                    await e.Channel.SendMessage("lmao");
+                else if (e.Message.Text.Contains("(╯°□°）╯︵ ┻━┻"))
+                    await e.Channel.SendMessage("┬─┬﻿ ノ( ゜-゜ノ)");
+                else if (e.Message.Text.Contains("┬─┬﻿ ノ( ゜-゜ノ)"))
+                    await e.Channel.SendMessage("(╯°□°）╯︵ ┻━┻");
+            }
         };
 
         //Since we have setup our CommandChar to be '*', we will run this command by typing *greet
@@ -97,6 +104,23 @@ class Program
                     //sends a message to channel with the given text
                 });
 
+        _client.GetService<CommandService>().CreateCommand("beemoviescript") //create command
+        .Description("Prints the first ~10,000 characters of the Bee Movie script.") //add description, it will be shown when *help is used
+        .Do(async e =>
+        {
+            await e.Channel.SendMessage(SQU1RR3L.BeeMovie.BeeMovie1);
+            await e.Channel.SendMessage(SQU1RR3L.BeeMovie.BeeMovie2);
+            await e.Channel.SendMessage(SQU1RR3L.BeeMovie.BeeMovie3);
+            await e.Channel.SendMessage(SQU1RR3L.BeeMovie.BeeMovie4);
+            await e.Channel.SendMessage(SQU1RR3L.BeeMovie.BeeMovie5);
+            await e.Channel.SendMessage(SQU1RR3L.BeeMovie.BeeMovie6);
+            await e.Channel.SendMessage(SQU1RR3L.BeeMovie.BeeMovie7);
+            await e.Channel.SendMessage(SQU1RR3L.BeeMovie.BeeMovie8);
+            await e.Channel.SendMessage(SQU1RR3L.BeeMovie.BeeMovie9);
+            await e.Channel.SendMessage(SQU1RR3L.BeeMovie.BeeMovie10);
+            //IT'S THE BEE MOVIE
+        });
+
         _client.GetService<CommandService>().CreateCommand("info")
                 .Alias(new string[] { "userinfo" }) //add aliases
                 .Description("Displays info about a user.")
@@ -124,6 +148,37 @@ class Program
                                                      $"Username: {username}\n" +
                                                      $"Roles: {roles}\n```" +
                                                      $"\n{avatar}\n");
+                });
+
+        _client.GetService<CommandService>().CreateCommand("mentionspam")
+                .Alias(new string[] { "pingspam" }) //add aliases
+                .Hide()
+                .Description("Mention a user ~15 times over the course of ~15 seconds.")
+                .Parameter("User", ParameterType.Required)
+                .Do(async e =>
+                {
+                    string mension = e.GetArg("User");
+                    ulong id = e.User.Id;
+                    if (mension.Contains("!"))
+                        id = ulong.Parse(mension.Split('!')[1].Split('>')[0]);
+                    else
+                        id = ulong.Parse(mension.Split('@')[1].Split('>')[0]);
+
+                    await e.Channel.SendMessage($"<@" + id + "> Ping!");
+                    await e.Channel.SendMessage($"<@" + id + "> Pong!");
+                    await e.Channel.SendMessage($"<@" + id + "> Hello?");
+                    await e.Channel.SendMessage($"<@" + id + "> Hiya!");
+                    await e.Channel.SendMessage($"<@" + id + "> Boop!");
+                    await e.Channel.SendMessage($"<@" + id + "> Poke!");
+                    await e.Channel.SendMessage($"<@" + id + "> Hola!");
+                    await e.Channel.SendMessage($"<@" + id + "> According to all known laws of aviation, there is no way a bee should be able to fly.");
+                    await e.Channel.SendMessage($"<@" + id + "> Its wings are too small to get its fat little body off the ground.");
+                    await e.Channel.SendMessage($"<@" + id + "> The bee, of course, flies anyway.");
+                    await e.Channel.SendMessage($"<@" + id + "> Hey, where you at?");
+                    await e.Channel.SendMessage($"<@" + id + "> Bonjour!");
+                    await e.Channel.SendMessage($"<@" + id + "> Ping!");
+                    await e.Channel.SendMessage($"<@" + id + "> Hello?");
+                    await e.Channel.SendMessage($"<@" + id + "> Sorry not sorry for the pings. <3 - <@" + e.User.Id + ">");
                 });
 
         // Register a Hook into the UserBanned event using a Lambda
