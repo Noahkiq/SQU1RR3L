@@ -88,6 +88,14 @@ class Program
                     //sends a message to channel with the given text
                 });
 
+        _client.GetService<CommandService>().CreateCommand("info") //create command
+                .Description("Displays info about the bot.") //add description, it will be shown when *help is used
+                .Do(async e =>
+                {
+                    await e.Channel.SendMessage($"Heya! I'm SQU1RR3L, the general Discord bot written by Noahkiq. You can check out my command list with `*help` or check out my docs over at http://noahkiq.github.io/SQU1RR3L/.");
+                    //sends a message to channel with the given text
+                });
+
         _client.GetService<CommandService>().CreateCommand("emojiseals") //create command
                 .Description("Navy Seals Emojipasta") //add description, it will be shown when *help is used
                 .Do(async e =>
@@ -121,33 +129,35 @@ class Program
             //IT'S THE BEE MOVIE
         });
 
-        _client.GetService<CommandService>().CreateCommand("info")
-                .Alias(new string[] { "userinfo" }) //add aliases
+        _client.GetService<CommandService>().CreateCommand("userinfo")
                 .Description("Displays info about a user.")
                 .Parameter("User", ParameterType.Optional)
                 .Do(async e =>
                 {
-                    string mension = e.GetArg("User");
-                    ulong id = e.User.Id;
-                    string username = e.User.Name;
-                    string avatar = e.User.AvatarUrl;
-                    Discord.User roles = (Discord.User)e.User.Roles;
-                    if (e.GetArg("User") != "")
+                    if (!e.Channel.IsPrivate)
                     {
-                        if (mension.Contains("!"))
-                            id = ulong.Parse(mension.Split('!')[1].Split('>')[0]);
-                        else
-                            id = ulong.Parse(mension.Split('@')[1].Split('>')[0]);
+                        string mension = e.GetArg("User");
+                        ulong id = e.User.Id;
+                        string username = e.User.Name;
+                        string avatar = e.User.AvatarUrl;
+                        Discord.User roles = (Discord.User)e.User.Roles;
+                        if (e.GetArg("User") != "")
+                        {
+                            if (mension.Contains("!"))
+                                id = ulong.Parse(mension.Split('!')[1].Split('>')[0]);
+                            else
+                                id = ulong.Parse(mension.Split('@')[1].Split('>')[0]);
 
-                        username = e.Server.GetUser(id).Name;
-                        avatar = e.Server.GetUser(id).AvatarUrl;
-                        roles = (Discord.User)e.Server.GetUser(id).Roles;
+                            username = e.Server.GetUser(id).Name;
+                            avatar = e.Server.GetUser(id).AvatarUrl;
+                            roles = (Discord.User)e.Server.GetUser(id).Roles;
+                        }
+
+                        await e.Channel.SendMessage($"```\nID:       {id}\n" +
+                                                         $"Username: {username}\n" +
+                                                         $"Roles: {roles}\n```" +
+                                                         $"\n{avatar}\n");
                     }
-
-                    await e.Channel.SendMessage($"```\nID:       {id}\n" +
-                                                     $"Username: {username}\n" +
-                                                     $"Roles: {roles}\n```" +
-                                                     $"\n{avatar}\n");
                 });
 
         _client.GetService<CommandService>().CreateCommand("mentionspam")
