@@ -8,10 +8,7 @@
 *.sln.docstates
 *Settings.cs
 /*Settings.cs
-/GlobalSettings.cs
-/SQU1RR3L/GlobalSettings.cs
-token.config
-
+token.txt
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
