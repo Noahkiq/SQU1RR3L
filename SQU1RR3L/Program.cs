@@ -45,7 +45,8 @@ class Program
             {
                 if (e.Message.RawText == $"beepboop, calculating response time...")
                 {
-                    await e.Message.Edit($"Pong! Responded in " + (e.Message.Timestamp - MessageSent) + " seconds.");
+                    var ping = e.Message.Timestamp - MessageSent;
+                    await e.Message.Edit($"Pong! Responded in " + (ping.Milliseconds) + " seconds.");
                 }
                 else if ((e.Message.Text == "🌑 rock!") && (e.Message.IsAuthor))
                 {
@@ -238,6 +239,15 @@ class Program
             //IT'S THE BEE MOVIE
         });
 
+        _client.GetService<CommandService>().CreateCommand("ping") //create command
+                .Description("that's some good shit 👌") //add description, it will be shown when *help is used
+                .Do(async e =>
+                {
+                    CommandsUsed++;
+                    MessageSent = e.Message.Timestamp;
+                    await e.Channel.SendMessage($"beepboop, calculating response time...");
+                });
+
         _client.GetService<CommandService>().CreateCommand("userinfo")
                 .Description("Displays info about a user.")
                 .Parameter("User", ParameterType.Optional)
@@ -254,12 +264,13 @@ class Program
                             string avatar = e.User.AvatarUrl;
                             string nickname = e.User.Nickname;
                             var joined = e.User.JoinedAt;
+                            var joinedDays = DateTime.Now - joined;
                             var game = e.User.CurrentGame.ToString();
-                            await e.Channel.SendMessage($"```xl\n" +
+                            await e.Channel.SendMessage($"```xl\n[Bot] (if you couldnt tell)\n" +
                                                              $"\nID:           {id}\n" +
                                                              $"Username:     {username}\n" +
                                                              $"Nickname:     {nickname}\n" +
-                                                             $"Joined:       {joined}\n" +
+                                                             $"Joined:       {joined} ({joinedDays.Days} days ago.)\n" +
                                                              $"Current game: {game}\n" +
                                                              $"Avatar:\n```" +
                                                              $"\n{avatar}\n");
@@ -291,6 +302,7 @@ class Program
                                 string avatar = e.Server.GetUser(id).AvatarUrl;
                                 string nickname = e.Server.GetUser(id).Nickname;
                                 var joined = e.Server.GetUser(id).JoinedAt;
+                                var joinedDays = DateTime.Now - joined;
                                 var activity = e.Server.GetUser(id).LastActivityAt;
                                 var online = e.Server.GetUser(id).LastOnlineAt;
                                 var game = e.Server.GetUser(id).CurrentGame.ToString();
@@ -299,7 +311,7 @@ class Program
                                                                  $"\nID:           {id}\n" +
                                                                  $"Username:     {username}\n" +
                                                                  $"Nickname:     {nickname}\n" +
-                                                                 $"Joined:       {joined} ({DateTime.Now.Day - joined.Day} days ago)\n" +
+                                                                 $"Joined:       {joined} ({joinedDays.Days} days ago)\n" +
                                                                  $"Last active:  {activity}\n" +
                                                                  $"Last online:  {online}\n" +
                                                                  $"Current game: {game}\n" +
@@ -311,6 +323,7 @@ class Program
                                 ulong id = e.Server.FindUsers(mention).FirstOrDefault().Id;
                                 string nickname = e.Server.FindUsers(mention).FirstOrDefault().Nickname;
                                 var joined = e.Server.FindUsers(mention).FirstOrDefault().JoinedAt;
+                                var joinedDays = DateTime.Now - joined;
                                 var activity = e.Server.FindUsers(mention).FirstOrDefault().LastActivityAt;
                                 var online = e.Server.FindUsers(mention).FirstOrDefault().LastOnlineAt;
                                 var avatar = e.Server.FindUsers(mention).FirstOrDefault().AvatarUrl;
@@ -319,7 +332,7 @@ class Program
                                                                  $"\nID:           {id}\n" +
                                                                  $"Username:     {username}\n" +
                                                                  $"Nickname:     {nickname}\n" +
-                                                                 $"Joined:       {joined} ({DateTime.Now.Day - joined.Day} days ago)\n" +
+                                                                 $"Joined:       {joined} ({joinedDays.Days} days ago)\n" +
                                                                  $"Last active:  {activity}\n" +
                                                                  $"Last online:  {online}\n" +
                                                                  $"Current game: {game}\n" +
@@ -346,6 +359,7 @@ class Program
                 .Do(async e =>
                 {
                     CommandsUsed++;
+                    var CreationDate = DateTime.Now - e.Server.Owner.JoinedAt;
                     await e.Channel.SendMessage($"```xl\n" +
                                                 $"Name: {e.Server.Name}\n" +
                                                 $"ID: {e.Server.Id}\n" +
@@ -354,6 +368,7 @@ class Program
                                                 $"Default channel: #{e.Server.DefaultChannel}\n" +
                                                 $"Roles: {e.Server.RoleCount}\n" +
                                                 $"Owner: @{e.Server.Owner}\n" +
+                                                $"Creation date: {e.Server.Owner.JoinedAt} ({CreationDate.Days} days ago.)" +
                                                 $"Icon:\n" +
                                                 $"```\n{e.Server.IconUrl}");
                 });
