@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SQU1RR3L
 {
-    public static class BeeMovie
+    public class BeeMovie
     {
         public const string BeeMovie1 = "According to all known laws\n" +
 "of aviation,\n" +
