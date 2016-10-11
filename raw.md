@@ -34,7 +34,7 @@ You can use either `*` or `@SQU1RR3L` as a prefix for the bot.
 The bot will automatically post bans, unbans, joins, and leaves in the `#squirrel-log` channel if it exists. There's currently no toggle for this, aside from just deleting/creating the channel.
 
 ### Contributors
-@Julien12150 made most of *userinfoinfo and helped with some other things.
+[Julien12150](https://github.com/Julien12150) made most of *userinfo and helped with some other things.
 
 ### SQU1RR3L Hub
 You can join the SQU1RR3L Hub discord server to suggest new features or report issues. [Click here to join!](https://discord.gg/fUQKCQX)
