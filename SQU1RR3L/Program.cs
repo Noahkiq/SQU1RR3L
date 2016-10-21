@@ -46,7 +46,7 @@ class Program
                 if (e.Message.RawText == $"beepboop, calculating response time...")
                 {
                     var ping = e.Message.Timestamp - MessageSent;
-                    await e.Message.Edit($"Pong! Responded in " + (ping.Milliseconds) + " seconds.");
+                    await e.Message.Edit($"Pong! Responded in " + (ping.Milliseconds) + " milliseconds.");
                 }
                 else if ((e.Message.Text == "🌑 rock!") && (e.Message.IsAuthor))
                 {
@@ -74,6 +74,74 @@ class Program
                         await e.Message.Edit($"✂ scissors! I win!");
                     else if (LastUsedRPS == "scissors")
                         await e.Message.Edit($"✂ scissors! We tied!");
+                }
+            }
+            else if (e.Message.Text.StartsWith("*userinfo "))
+            {
+                if (!e.Channel.IsPrivate)
+                {
+                    string mention = e.Message.RawText.Replace($"*userinfo ", "");
+                    if (e.Message.RawText.ToLower().Contains($"*userinfo <@"))
+                    {
+                        ulong id = e.User.Id;
+                        string id1;
+                        string id2;
+                        if (mention.Contains("!"))
+                        {
+                            //id = ulong.Parse(mention.Split('!')[1].Split('>')[0]);
+                            id1 = mention.Replace($"<@!", "");
+                            id2 = id1.Replace($">", "");
+                            id = Convert.ToUInt64(id2);
+                        }
+                        else
+                        {
+                            //id = ulong.Parse(mention.Split('@')[1].Split('>')[0]);
+                            id1 = mention.Replace($"<@", "");
+                            id2 = id1.Replace($">", "");
+                            id = Convert.ToUInt64(id2);
+                        }
+
+                        string username = e.Server.GetUser(id).Name;
+                        string avatar = e.Server.GetUser(id).AvatarUrl;
+                        string nickname = e.Server.GetUser(id).Nickname;
+                        var joined = e.Server.GetUser(id).JoinedAt;
+                        var joinedDays = DateTime.Now - joined;
+                        var activity = e.Server.GetUser(id).LastActivityAt;
+                        var online = e.Server.GetUser(id).LastOnlineAt;
+
+                        await e.Channel.SendMessage($"```\n" +
+                                                         $"\nID:           {id}\n" +
+                                                         $"Username:     {username}\n" +
+                                                         $"Nickname:     {nickname}\n" +
+                                                         $"Joined:       {joined} ({joinedDays.Days} days ago)\n" +
+                                                         $"Last active:  {activity}\n" +
+                                                         $"Last online:  {online}\n" +
+                                                         $"```\nAvatar: {avatar}");
+                    }
+                    else if (!string.IsNullOrWhiteSpace(mention))
+                    {
+                        User user = e.Server.FindUsers(mention).FirstOrDefault();
+                        string username = user.Name;
+                        ulong id = user.Id;
+                        string nickname = user.Nickname;
+                        var joined = user.JoinedAt;
+                        var joinedDays = DateTime.Now - joined;
+                        var activity = user.LastActivityAt;
+                        var online = user.LastOnlineAt;
+                        var avatar = user.AvatarUrl;
+                        await e.Channel.SendMessage($"```xl\n" +
+                                                         $"\nID:           {id}\n" +
+                                                         $"Username:     {username}\n" +
+                                                         $"Nickname:     {nickname}\n" +
+                                                         $"Joined:       {joined} ({joinedDays.Days} days ago)\n" +
+                                                         $"Last active:  {activity}\n" +
+                                                         $"Last online:  {online}\n" +
+                                                         $"```\nAvatar: {avatar}");
+                    }
+                    else
+                    {
+                        await e.Channel.SendMessage($"No user by the name of {mention} was found.");
+                    }
                 }
             }
         };
@@ -250,97 +318,26 @@ class Program
 
         _client.GetService<CommandService>().CreateCommand("userinfo")
                 .Description("Displays info about a user.")
-                .Parameter("User", ParameterType.Optional)
                 .Do(async e =>
                 {
                     CommandsUsed++;
                     if (!e.Channel.IsPrivate)
                     {
-                        if (!e.Message.Text.Contains("<@"))
-                        {
-                            string mention = e.Message.Text;
-                            ulong id = e.User.Id;
-                            string username = e.User.Name;
-                            string avatar = e.User.AvatarUrl;
-                            string nickname = e.User.Nickname;
-                            var joined = e.User.JoinedAt;
-                            var joinedDays = DateTime.Now - joined;
-                            var game = e.User.CurrentGame.ToString();
-                            await e.Channel.SendMessage($"```xl\n[Bot] (if you couldnt tell)\n" +
-                                                             $"\nID:           {id}\n" +
-                                                             $"Username:     {username}\n" +
-                                                             $"Nickname:     {nickname}\n" +
-                                                             $"Joined:       {joined} ({joinedDays.Days} days ago.)\n" +
-                                                             $"Current game: {game}\n" +
-                                                             $"Avatar:\n```" +
-                                                             $"\n{avatar}\n");
-                        }
-                        else
-                        {
-                            string mention = e.Message.RawText.Replace($"*userinfo ", "");
-                            if (e.Message.RawText.ToLower().Contains($"*userinfo <@"))
-                            {
-                                ulong id = e.User.Id;
-                                string id1;
-                                string id2;
-                                if (mention.Contains("!"))
-                                {
-                                    //id = ulong.Parse(mention.Split('!')[1].Split('>')[0]);
-                                    id1 = mention.Replace($"<@!", "");
-                                    id2 = id1.Replace($">", "");
-                                    id = Convert.ToUInt64(id2);
-                                }
-                                else
-                                {
-                                    //id = ulong.Parse(mention.Split('@')[1].Split('>')[0]);
-                                    id1 = mention.Replace($"<@", "");
-                                    id2 = id1.Replace($">", "");
-                                    id = Convert.ToUInt64(id2);
-                                }
-
-                                string username = e.Server.GetUser(id).Name;
-                                string avatar = e.Server.GetUser(id).AvatarUrl;
-                                string nickname = e.Server.GetUser(id).Nickname;
-                                var joined = e.Server.GetUser(id).JoinedAt;
-                                var joinedDays = DateTime.Now - joined;
-                                var activity = e.Server.GetUser(id).LastActivityAt;
-                                var online = e.Server.GetUser(id).LastOnlineAt;
-                                var game = e.Server.GetUser(id).CurrentGame.ToString();
-
-                                await e.Channel.SendMessage($"```xl\n" +
-                                                                 $"\nID:           {id}\n" +
-                                                                 $"Username:     {username}\n" +
-                                                                 $"Nickname:     {nickname}\n" +
-                                                                 $"Joined:       {joined} ({joinedDays.Days} days ago)\n" +
-                                                                 $"Last active:  {activity}\n" +
-                                                                 $"Last online:  {online}\n" +
-                                                                 $"Current game: {game}\n" +
-                                                                 $"```\nAvatar: {avatar}");
-                            }
-                            else if (!string.IsNullOrWhiteSpace(mention))
-                            {
-                                string username = e.Server.FindUsers(mention).FirstOrDefault().Name;
-                                ulong id = e.Server.FindUsers(mention).FirstOrDefault().Id;
-                                string nickname = e.Server.FindUsers(mention).FirstOrDefault().Nickname;
-                                var joined = e.Server.FindUsers(mention).FirstOrDefault().JoinedAt;
-                                var joinedDays = DateTime.Now - joined;
-                                var activity = e.Server.FindUsers(mention).FirstOrDefault().LastActivityAt;
-                                var online = e.Server.FindUsers(mention).FirstOrDefault().LastOnlineAt;
-                                var avatar = e.Server.FindUsers(mention).FirstOrDefault().AvatarUrl;
-                                var game = e.Server.FindUsers(mention).FirstOrDefault().CurrentGame.ToString();
-                                await e.Channel.SendMessage($"```xl\n" +
-                                                                 $"\nID:           {id}\n" +
-                                                                 $"Username:     {username}\n" +
-                                                                 $"Nickname:     {nickname}\n" +
-                                                                 $"Joined:       {joined} ({joinedDays.Days} days ago)\n" +
-                                                                 $"Last active:  {activity}\n" +
-                                                                 $"Last online:  {online}\n" +
-                                                                 $"Current game: {game}\n" +
-                                                                 $"```\nAvatar: {avatar}");
-                            }
-                        }
+                        string mention = e.Message.Text;
+                        ulong id = e.User.Id;
+                        string username = e.User.Name;
+                        string avatar = e.User.AvatarUrl;
+                        string nickname = e.User.Nickname;
+                        var joined = e.User.JoinedAt;
+                        var joinedDays = DateTime.Now - joined;
+                        await e.Channel.SendMessage($"```\n" +
+                                                         $"\nID:           {id}\n" +
+                                                         $"Username:     {username}\n" +
+                                                         $"Nickname:     {nickname}\n" +
+                                                         $"Joined:       {joined} ({joinedDays.Days} days ago.)\n" +
+                                                         $"Avatar:\n```" +
+                                                         $"\n{avatar}\n");
                     }
-
                 });
 
         _client.GetService<CommandService>().CreateCommand("stats") //create command
@@ -560,8 +557,8 @@ class Program
                         .Description("Displays info about the tag command.")
                         .Do(async (e) =>
                         {
-                            await e.Channel.SendMessage($"The tag system is used for less important commands, such as images or injokes. The list of them is here:" +
-                                                        $"help, coo, wait, fightcary, kappa, qwerby, tantsalt, tantstop, doot, blacksanta, cupshots, delete, eminem, thatsthejoke, waterthose, autumnfox, shibae, taco, createtwow, riptwow, craftysevens, coyknee, carykh, powerabuse, carythetankengine, botespam, pasta, deletthis, tantalisa, spam, drawingrequest, patience, borntwerker, pinnedtwerking, itsjoke, staffping, tantdisgust, pit, thetruth\n" +
+                            await e.Channel.SendMessage($"The tag system is used for less important commands, such as images or injokes. The list of them is here:\n" +
+                                                        $"help, coo, wait, fightcary, kappa, qwerby, tantsalt, tantstop, doot, blacksanta, cupshots, delete, eminem, thatsthejoke, waterthose, autumnfox, shibae, taco, createtwow, riptwow, craftysevens, coyknee, carykh, powerabuse, carythetankengine, botespam, pasta, deletthis, tantalisa, spam, drawingrequest, patience, borntwerker, pinnedtwerking, itsjoke, staffping, tantdisgust, pit, thetruth, wonderifitwasturret\n" +
                                                         $"Example command usage: *tag kappa");
                         });
 
@@ -569,6 +566,18 @@ class Program
                         .Do(async (e) =>
                         {
                             await e.Channel.SendMessage($"wait coo is a boy");
+                        });
+
+            cgb.CreateCommand("wonderifitwasturret")
+                        .Do(async (e) =>
+                        {
+                            await e.Channel.SendMessage($"I wonder if it was TurretBot. How could it be him, he say that he likes me and he's my friend. Turret always tell me that he like me but I've been starting to wonder. Just because TurretBot tell me that he likes me doesn't mean that the necessarily do. It might just mean that Turret hates me and is lying to me when he say that he like me. I guess really, it comes down to a question of whether I am better at detecting whether @TurretBot :balloon:#5527 likes me or is lying to me about liking me than he is at lying to me about liking me if he don't like me. So, if I think that TurretBot likes me, then either Turret do like me and my ability to discern whether or not he is lying to me about whether or not they like me in relation to his ability to lie to me about whether or not they like me is of relatively little consequence or it happens to be the case that TurretBot don't like me and my ability to discern whether or not he is lying to me about whether or not they like me is inferior to Turret's ability to lie to me about whether or not they like me. I wonder if it was TurretBot. Or was it Idiot 9.0? It could have been Idiot you know how he get... flee!!! FLEE FOR YOUR LIVES or he'll get you....");
+                        });
+
+            cgb.CreateCommand("whatsthis")
+                        .Do(async (e) =>
+                        {
+                            await e.Channel.SendMessage($"awwwww!~ *nuzzles u back and pounces on u and notices your buldge* OwO what's this...?");
                         });
 
             cgb.CreateCommand("wait")
