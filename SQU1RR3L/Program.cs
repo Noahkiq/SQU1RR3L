@@ -24,6 +24,7 @@ class Program
     public static int gpsCooldownInt = 0;
     public static int navysealsCooldownInt = 0;
     public static int powertwowerCooldownInt = 0;
+    public static bool onlyOpToggle;
 
     private DiscordClient _client;
 
@@ -144,7 +145,7 @@ class Program
                     }
                 }
             }
-            else if ((e.Message.Channel.Name == "op") && (e.Message.RawText != "op"))
+            else if ((e.Message.Channel.Name == "op") && (!e.Message.RawText.Contains($"op")) && (onlyOpToggle == true))
             {
                 await e.Message.Delete();
             }
@@ -831,6 +832,21 @@ class Program
                 await logChannel.SendMessage($"{e.User.Name} left the server.");
             }
         };
+        _client.GetService<CommandService>().CreateCommand("toggleonlyop")
+            .Description("toggles op filter")
+            .Do(async e =>
+            {
+                if (onlyOpToggle == true)
+                {
+                    await e.Channel.SendMessage("Toggled op filter off");
+                    onlyOpToggle = false;
+                }
+                else if (onlyOpToggle == false)
+                {
+                    await e.Channel.SendMessage("Toggled op filter on");
+                    onlyOpToggle = true;
+                }
+            });
 
         string token = File.ReadAllText("token.txt");
         _client.ExecuteAndWait(async () => {
