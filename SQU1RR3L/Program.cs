@@ -145,7 +145,7 @@ class Program
                     }
                 }
             }
-            else if ((e.Message.Channel.Name == "op") && (!e.Message.RawText.Contains($"op")) && (onlyOpToggle == true))
+            else if ((e.Channel.Name == "op") && (!e.Message.RawText.Contains("op")) && (onlyOpToggle == true))
             {
                 await e.Message.Delete();
             }
