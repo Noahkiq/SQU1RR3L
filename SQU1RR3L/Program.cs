@@ -144,6 +144,10 @@ class Program
                     }
                 }
             }
+            else if ((e.Message.Channel.Name == "op") && (e.Message.RawText != "op"))
+            {
+                await e.Message.Delete();
+            }
         };
 
         //Since we have setup our CommandChar to be '*', we will run this command by typing *greet
@@ -830,7 +834,7 @@ class Program
 
         string token = File.ReadAllText("token.txt");
         _client.ExecuteAndWait(async () => {
-            await _client.Connect("Bot " + token);
+            await _client.Connect(token, TokenType.Bot);
             _client.SetGame("*invite");
         });
 
