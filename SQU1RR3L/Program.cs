@@ -24,7 +24,7 @@ class Program
     public static int gpsCooldownInt = 0;
     public static int navysealsCooldownInt = 0;
     public static int powertwowerCooldownInt = 0;
-    public static bool onlyOpToggle;
+    public static bool onlyOpToggle = false;
 
     private DiscordClient _client;
 
