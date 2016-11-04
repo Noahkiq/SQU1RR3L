@@ -24,6 +24,7 @@ class Program
     public static int gpsCooldownInt = 0;
     public static int navysealsCooldownInt = 0;
     public static int powertwowerCooldownInt = 0;
+    public static bool onlyOpToggle = false;
 
     private DiscordClient _client;
 
@@ -155,6 +156,10 @@ class Program
                         await e.Channel.SendMessage($"No user by the name of {mention} was found.");
                     }
                 }
+            }
+            else if ((e.Channel.Name == "op") && (!e.Message.RawText.Contains("op")) && (onlyOpToggle == true))
+            {
+                await e.Message.Delete();
             }
         };
 
@@ -821,10 +826,25 @@ class Program
                 await logChannel.SendMessage($"{e.User.Name} left the server.");
             }
         };
+        _client.GetService<CommandService>().CreateCommand("toggleonlyop")
+            .Description("toggles op filter")
+            .Do(async e =>
+            {
+                if (onlyOpToggle == true)
+                {
+                    await e.Channel.SendMessage("Toggled op filter off");
+                    onlyOpToggle = false;
+                }
+                else if (onlyOpToggle == false)
+                {
+                    await e.Channel.SendMessage("Toggled op filter on");
+                    onlyOpToggle = true;
+                }
+            });
 
         string token = File.ReadAllText("token.txt");
         _client.ExecuteAndWait(async () => {
-            await _client.Connect("Bot " + token);
+            await _client.Connect(token, TokenType.Bot);
             _client.SetGame("*invite");
         });
 
