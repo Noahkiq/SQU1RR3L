@@ -10,6 +10,7 @@ using Discord.Modules;
 using Discord.Audio;
 using System.IO;
 using System.Timers;
+using Cleverbot.Net;
 
 class Program
 {
@@ -20,7 +21,7 @@ class Program
     public static int CommandsUsed;
     public static DateTime StartupTime = DateTime.Now;
     static Random rnd = new Random();
-    public static string commandPrefix = "*";
+    public static string commandPrefix = "^";
     public static int gpsCooldownInt = 0;
     public static int navysealsCooldownInt = 0;
     public static int powertwowerCooldownInt = 0;
@@ -61,7 +62,7 @@ class Program
                     var ping = e.Message.Timestamp - MessageSent;
                     await e.Message.Edit($"Pong! Responded in " + (ping.Milliseconds) + " milliseconds.");
                 }
-                else if ((e.Message.Text == "🌑 rock!") && (e.Message.IsAuthor))
+                else if (e.Message.Text == "🌑 rock!")
                 {
                     if (LastUsedRPS == "rock")
                         await e.Message.Edit($"🌑 rock! We tied!");
@@ -70,7 +71,7 @@ class Program
                     else if (LastUsedRPS == "scissors")
                         await e.Message.Edit($"🌑 rock! I win!");
                 }
-                else if ((e.Message.Text == "📰 paper!") && (e.Message.IsAuthor))
+                else if (e.Message.Text == "📰 paper!")
                 {
                     if (LastUsedRPS == "rock")
                         await e.Message.Edit($"📰 paper! I win!");
@@ -79,7 +80,7 @@ class Program
                     else if (LastUsedRPS == "scissors")
                         await e.Message.Edit($"📰 paper! You win!");
                 }
-                else if ((e.Message.Text == "✂ scissors!") && (e.Message.IsAuthor))
+                else if (e.Message.Text == "✂ scissors!")
                 {
                     if (LastUsedRPS == "rock")
                         await e.Message.Edit($"✂ scissors! You win!");
@@ -89,12 +90,18 @@ class Program
                         await e.Message.Edit($"✂ scissors! We tied!");
                 }
             }
-            else if (e.Message.Text.StartsWith("*userinfo "))
+            else if (e.Message.Text.StartsWith($"{commandPrefix}speak"))
+            {
+                var session = CleverbotSession.NewSession("ZK65LpHPrgYVWk6T", "NVBwA37fiDvow0oASCxZatBsjCz7NWM8");
+                var response = session.Send(e.Message.Text.Replace($"{commandPrefix}speak ", ""));
+                await e.Channel.SendMessage($"{e.User.Mention}: {response}");
+            }
+            else if (e.Message.Text.StartsWith($"{commandPrefix}userinfo "))
             {
                 if (!e.Channel.IsPrivate)
                 {
-                    string mention = e.Message.RawText.Replace($"*userinfo ", "");
-                    if (e.Message.RawText.ToLower().Contains($"*userinfo <@"))
+                    string mention = e.Message.RawText.Replace($"{commandPrefix}userinfo ", "");
+                    if (e.Message.RawText.ToLower().Contains($"{commandPrefix}userinfo <@"))
                     {
                         ulong id = e.User.Id;
                         string id1;
@@ -214,6 +221,13 @@ class Program
                     //sends a message to channel with the given text
                 });
 
+        _client.GetService<CommandService>().CreateCommand("speak") //create command
+                .Do(e =>
+                {
+                    CommandsUsed++;
+                    // parameters are dumb with this so the actual command stuff is up somewhere
+                });
+
         _client.GetService<CommandService>().CreateCommand("ban") //create command
                 .Description("Bans a user.") //add description, it will be shown when *help is used
                 .Parameter("userToBan", ParameterType.Required) //as an argument, we have a person we want to greet
@@ -284,7 +298,7 @@ class Program
                 .Do(async e =>
                 {
                     CommandsUsed++;
-                    await e.Channel.SendMessage($"Heya! I'm SQU1RR3L, the general Discord bot written by Noahkiq. You can check out my command list with `*help` or check out my docs over at http://noahkiq.github.io/SQU1RR3L/.");
+                    await e.Channel.SendMessage($"Heya! I'm SQU1RR3L, the general Discord bot written by Noahkiq. You can check out my command list with `^help` or check out my docs over at http://noahkiq.github.io/SQU1RR3L/.");
                     //sends a message to channel with the given text
                 });
 
@@ -391,65 +405,66 @@ class Program
 
         _client.GetService<CommandService>().CreateCommand("roll") //create command
                 .Description("Rolls a die.") //add description, it will be shown when *help is used
+                .Parameter("number", ParameterType.Optional) //as an argument, we have a person we want to greet
                 .Do(async e =>
                 {
                     CommandsUsed++;
-                    if (e.Message.Text.Contains($"{commandPrefix}roll d"))
+                    if (e.Message.Text.Contains($"{commandPrefix}roll "))
                     {
-                        if (e.Message.Text.ToLower() == $"{commandPrefix}roll d10")
+                        if (e.Message.Text.ToLower() == $"{commandPrefix}roll 10")
                         {
                             int dice = rnd.Next(1, 11);
                             await e.Channel.SendMessage($"The ten-sided die rolled a... {dice}!");
                         }
-                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll d1")
+                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll 1")
                             await e.Channel.SendMessage($"The one-sided die rolled a... one! Wow, surprising!");
-                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll d2")
+                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll 2")
                         {
                             int dice = rnd.Next(1, 3);
                             await e.Channel.SendMessage($"The two-sided die rolled a... {dice}!");
                         }
-                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll d3")
+                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll 3")
                         {
                             int dice = rnd.Next(1, 4);
                             await e.Channel.SendMessage($"The three-sided die rolled a... {dice}!");
                         }
-                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll d4")
+                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll 4")
                         {
                             int dice = rnd.Next(1, 5);
                             await e.Channel.SendMessage($"The four-sided die rolled a... {dice}!");
                         }
-                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll d5")
+                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll 5")
                         {
                             int dice = rnd.Next(1, 6);
                             await e.Channel.SendMessage($"The five-sided die rolled a... {dice}!");
                         }
-                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll d6")
+                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll 6")
                         {
                             int dice = rnd.Next(1, 7);
                             await e.Channel.SendMessage($"The six-sided die rolled a... {dice}!");
                         }
-                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll d7")
+                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll 7")
                         {
                             int dice = rnd.Next(1, 8);
                             await e.Channel.SendMessage($"The seven-sided die rolled a... {dice}!");
                         }
-                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll d8")
+                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll 8")
                         {
                             int dice = rnd.Next(1, 9);
                             await e.Channel.SendMessage($"The eight-sided die rolled a... {dice}!");
                         }
-                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll d9")
+                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll 9")
                         {
                             int dice = rnd.Next(1, 10);
                             await e.Channel.SendMessage($"The nine-sided die rolled a... {dice}!");
                         }
                         //d10 is up above because reasons
-                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll d11")
+                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll 11")
                         {
                             int dice = rnd.Next(1, 12);
                             await e.Channel.SendMessage($"The eleven-sided die rolled a... {dice}!");
                         }
-                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll d12")
+                        else if (e.Message.Text.ToLower() == $"{commandPrefix}roll 12")
                         {
                             int dice = rnd.Next(1, 13);
                             await e.Channel.SendMessage($"The twelve-sided die rolled a... {dice}!");
@@ -845,7 +860,7 @@ class Program
         string token = File.ReadAllText("token.txt");
         _client.ExecuteAndWait(async () => {
             await _client.Connect(token, TokenType.Bot);
-            _client.SetGame("*invite");
+            _client.SetGame("^invite");
         });
 
     }
