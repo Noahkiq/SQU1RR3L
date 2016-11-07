@@ -92,7 +92,9 @@ class Program
             }
             else if (e.Message.Text.StartsWith($"{commandPrefix}speak"))
             {
-                var session = CleverbotSession.NewSession("ZK65LpHPrgYVWk6T", "NVBwA37fiDvow0oASCxZatBsjCz7NWM8");
+                string cleverbotUser = File.ReadLines("cleverbot.txt").Skip(0).Take(1).First();
+                string cleverbotKey = File.ReadLines("cleverbot.txt").Skip(1).Take(1).First();
+                var session = CleverbotSession.NewSession(cleverbotUser, cleverbotKey);
                 var response = session.Send(e.Message.Text.Replace($"{commandPrefix}speak ", ""));
                 await e.Channel.SendMessage($"{e.User.Mention}: {response}");
             }
