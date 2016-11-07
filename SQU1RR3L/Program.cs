@@ -300,7 +300,7 @@ class Program
                 .Do(async e =>
                 {
                     CommandsUsed++;
-                    await e.Channel.SendMessage($"Heya! I'm SQU1RR3L, the general Discord bot written by Noahkiq. You can check out my command list with `^help` or check out my docs over at http://noahkiq.github.io/SQU1RR3L/.");
+                    await e.Channel.SendMessage($"Heya! I'm SQU1RR3L, the general Discord bot written by Noahkiq. You can check out my command list with `^help` or check out my docs over at http://noahkiq.github.io/SQU1RR3L/. \nThe current bot version is **1.2.2**");
                     //sends a message to channel with the given text
                 });
 
