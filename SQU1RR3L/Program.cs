@@ -332,7 +332,7 @@ class Program
                         string findUser = e.Args[0];
                         if (!string.IsNullOrWhiteSpace(findUser))
                         {
-                            if (e.Message.MentionedUsers.Count() == 1)
+                            if (e.Message.MentionedUsers.Count() == 1)           // https://discord.gg/7YqjHsN
                             {
                                 u = e.Message.MentionedUsers.FirstOrDefault();
                                 await e.Server.Ban(u);
