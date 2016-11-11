@@ -26,6 +26,12 @@ class Program
     public static int navysealsCooldownInt = 0;
     public static int powertwowerCooldownInt = 0;
     public static bool onlyOpToggle = false;
+    public static List<ulong> voted = new List<ulong>();
+
+    public static int choice1 = 0;
+    public static int choice2 = 0;
+    public static int choice3 = 0;
+    public static int choice4 = 0;
 
     private DiscordClient _client;
 
@@ -170,6 +176,80 @@ class Program
             {
                 await e.Message.Delete();
             }
+            else if (e.Server != null)
+            {
+                if ((e.Server.Id == 229662782356848640) && (e.Message.Text.ToLower() == $"{commandPrefix}votes"))
+                {
+                    await e.Channel.SendMessage($"Option 1: **{choice1}** votes.\n" +
+                                                $"Option 2: **{choice2}** votes.\n" +
+                                                $"Option 3: **{choice3}** votes.\n" +
+                                                $"Option 4: **{choice4}** votes.\n");
+                }
+                else if ((e.Server.Id == 229662782356848640) && (e.Message.Text.ToLower() == $"{commandPrefix}resetvotes"))
+                {
+                    if (e.User.ServerPermissions.ManageMessages)
+                    {
+                        choice1 = 0;
+                        choice2 = 0;
+                        choice3 = 0;
+                        choice4 = 0;
+                        voted.Clear();
+                        await e.Channel.SendMessage($"Votes have been reset.");
+                    }
+                    else
+                        await e.Channel.SendMessage($"You must be a janitor or above to use this command!");
+                }
+            }
+            if (e.Message.Text.StartsWith($"{commandPrefix}vote"))
+            {
+                if(e.Message.Text != $"{commandPrefix}votes")
+                {
+                    if (e.Server != null)
+                        if (e.Server.Id == 229662782356848640)
+                            await e.Channel.SendMessage($"This command can only be run in DM's!"); // Displays error message if run on City Islands
+                        else { }
+                    else
+                    {
+                        bool voter = false;
+                        foreach (var id in voted)
+                        {
+                            if (id == e.User.Id)
+                            {
+                                voter = true; // If the user's ID was found in the "voted" list, "voter" is set to true
+                            }
+                        }
+                        if (voter == true)
+                        {
+                            await e.Channel.SendMessage($"You have already voted!"); // Displays error if user has already voted
+                        }
+                        else
+                        {
+                            if (e.Message.Text.ToLower() == $"{commandPrefix}vote")
+                                await e.Channel.SendMessage($"Correct command usage: `{commandPrefix}vote [choice]`"); // Displays error if no input
+                            else
+                            {
+                                voted.Add(e.User.Id); // Add user ID to "voted" list
+                                string vote = e.Message.Text.ToLower().Replace($"{commandPrefix}vote ", ""); // Grab the user's input/vote
+                                if ((vote == "1") || (vote == "2") || (vote == "3") || (vote == "4"))
+                                {
+                                    if (vote == "1")
+                                        choice1++;
+                                    if (vote == "2")
+                                        choice2++;
+                                    if (vote == "3")
+                                        choice3++;
+                                    if (vote == "4")
+                                        choice4++;
+
+                                    await e.Channel.SendMessage($"Your vote has been recorded.");
+                                }
+                                else
+                                    await e.Channel.SendMessage($"Invalid input. Make sure you're using the number of the vote choice!");
+                            }
+                        }
+                    }
+                }
+            }
         };
 
         //Since we have setup our CommandChar to be '*', we will run this command by typing *greet
@@ -220,6 +300,16 @@ class Program
                 {
                     CommandsUsed++;
                     await e.Channel.SendMessage($"oh");
+                    //sends a message to channel with the given text
+                });
+        
+        _client.GetService<CommandService>().CreateCommand("source") //create command
+                .Alias(new string[] { "git", "sourcecode", "github" }) //add aliases
+                .Description("Displays the bot's source code.") //add description, it will be shown when *help is used
+                .Do(async e =>
+                {
+                    CommandsUsed++;
+                    await e.Channel.SendMessage($"You can check out the bot's source code at <https://github.com/Noahkiq/SQU1RR3L>.");
                     //sends a message to channel with the given text
                 });
 
@@ -300,7 +390,8 @@ class Program
                 .Do(async e =>
                 {
                     CommandsUsed++;
-                    await e.Channel.SendMessage($"Heya! I'm SQU1RR3L, the general Discord bot written by Noahkiq. You can check out my command list with `^help` or check out my docs over at http://noahkiq.github.io/SQU1RR3L/. \nThe current bot version is **1.2.2**");
+                    await e.Channel.SendMessage($"Heya! I'm SQU1RR3L, the general Discord bot written by Noahkiq. You can check out my command list with `^help` or check out my docs over at http://noahkiq.github.io/SQU1RR3L/. \n" +
+                                                $"The current bot version is **1.2.3**");
                     //sends a message to channel with the given text
                 });
 

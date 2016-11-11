@@ -7,6 +7,7 @@ using Discord;
 using Discord.WebSocket;
 using Discord.Rest;
 using System.IO;
+using System.Runtime.Serialization;
 
 class Program
 {
