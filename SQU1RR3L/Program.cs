@@ -11,6 +11,7 @@ using Discord.Audio;
 using System.IO;
 using System.Timers;
 using Cleverbot.Net;
+using DynamicExpresso;
 
 class Program
 {
@@ -175,6 +176,22 @@ class Program
             else if ((e.Channel.Name == "op") && (!e.Message.RawText.Contains("op")) && (onlyOpToggle == true))
             {
                 await e.Message.Delete();
+            }
+            else if ((e.User.Id == 140564059417346049) && (e.Message.Text.StartsWith($"{commandPrefix}eval")))
+            {
+                try
+                {
+                    var interpreter = new Interpreter();
+                    var parameters = new[] { new Parameter("e", e) };
+                    var message = e.Message.RawText.Replace($"{commandPrefix}eval ", "");
+                    var result = interpreter.Eval(message, parameters);
+                    await e.Channel.SendMessage($"Output: `{result}`");
+                    // await e.Server.Client.FindServers("HUAT Chill Lounge").FirstOrDefault().Leave();
+                }
+                catch (Exception error)
+                {
+                    Console.WriteLine($"[Error] Bot ran into an issue while trying to run an eval. {error.ToString()}");
+                }
             }
             else if (e.Server != null)
             {
