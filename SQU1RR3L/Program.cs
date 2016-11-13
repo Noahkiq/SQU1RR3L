@@ -6,8 +6,6 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.Commands.Permissions.Levels;
-using Discord.Modules;
-using Discord.Audio;
 using System.IO;
 using System.Timers;
 using Cleverbot.Net;
@@ -319,7 +317,7 @@ class Program
                     await e.Channel.SendMessage($"oh");
                     //sends a message to channel with the given text
                 });
-        
+
         _client.GetService<CommandService>().CreateCommand("source") //create command
                 .Alias(new string[] { "git", "sourcecode", "github" }) //add aliases
                 .Description("Displays the bot's source code.") //add description, it will be shown when *help is used
