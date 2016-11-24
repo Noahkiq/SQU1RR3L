@@ -60,12 +60,34 @@ class Program
                     await e.Channel.SendMessage("eeEeEeeeeeEeEEeeEeEee");
                 }
             }
+            else if((e.Channel.Id == 229595785346416640) && (e.Message.Text.ToLower().StartsWith($"{commandPrefix}team")) && (!e.Message.IsAuthor))
+            {
+                var red = e.Server.GetRole(249738105483952128); // Grab 'Christmas Red' role
+                var green = e.Server.GetRole(249738118419185665); // Grab 'Christmas Green' role
+                var input = e.Message.Text.ToLower().Replace($"{commandPrefix}team ", ""); // Grabs input
+                if (string.IsNullOrWhiteSpace(input))
+                    await e.Channel.SendMessage($"{commandPrefix}team - Joins a certain team during special events. Usage: `{commandPrefix}team `red/green)`");
+                if ((e.User.HasRole(red)) || (e.User.HasRole(green))) // Tests if user is already in a team
+                    await e.Channel.SendMessage("You already picked a team!");
+                else if ((input == "red") || (input == "christmas red")) // Check if user wants red team
+                {
+                    await e.User.AddRoles(red); // Add user to red team
+                    await e.Channel.SendMessage($"You have successfully been added to the red team!"); // Print success message
+                }
+                else if ((input == "green") || (input == "christmas green")) // Check if user wants green team
+                {
+                    await e.User.AddRoles(green); // Add user to green team
+                    await e.Channel.SendMessage($"You have successfully been added to the green team!"); // Print success message
+                }
+                else
+                    await e.Channel.SendMessage($"Invalid input, must be either `red` or `green`."); // Print error if input was invalid
+            }
             if (e.Message.IsAuthor)
             {
                 if (e.Message.RawText == $"beepboop, calculating response time...")
                 {
                     var ping = e.Message.Timestamp - MessageSent;
-                    await e.Message.Edit($"Pong! Responded in " + (ping.Milliseconds) + " milliseconds.");
+                    await e.Message.Edit($"Pong! Responded in " + (ping.TotalMilliseconds) + " milliseconds.");
                 }
                 else if (e.Message.Text == "🌑 rock!")
                 {
@@ -108,9 +130,10 @@ class Program
                 if (!e.Channel.IsPrivate)
                 {
                     string mention = e.Message.RawText.Replace($"{commandPrefix}userinfo ", "");
+                    User user = e.User;
+                    ulong id = user.Id;
                     if (e.Message.RawText.ToLower().Contains($"{commandPrefix}userinfo <@"))
                     {
-                        ulong id = e.User.Id;
                         string id1;
                         string id2;
                         if (mention.Contains("!"))
@@ -128,47 +151,26 @@ class Program
                             id = Convert.ToUInt64(id2);
                         }
 
-                        string username = e.Server.GetUser(id).Name;
-                        string avatar = e.Server.GetUser(id).AvatarUrl;
-                        string nickname = e.Server.GetUser(id).Nickname;
-                        var joined = e.Server.GetUser(id).JoinedAt;
-                        var joinedDays = DateTime.Now - joined;
-                        var activity = e.Server.GetUser(id).LastActivityAt;
-                        var online = e.Server.GetUser(id).LastOnlineAt;
-
-                        await e.Channel.SendMessage($"```\n" +
-                                                         $"\nID:           {id}\n" +
-                                                         $"Username:     {username}\n" +
-                                                         $"Nickname:     {nickname}\n" +
-                                                         $"Joined:       {joined} ({joinedDays.Days} days ago)\n" +
-                                                         $"Last active:  {activity}\n" +
-                                                         $"Last online:  {online}\n" +
-                                                         $"```\nAvatar: {avatar}");
+                        user = e.Server.GetUser(id);
                     }
                     else if (!string.IsNullOrWhiteSpace(mention))
-                    {
-                        User user = e.Server.FindUsers(mention).FirstOrDefault();
-                        string username = user.Name;
-                        ulong id = user.Id;
-                        string nickname = user.Nickname;
-                        var joined = user.JoinedAt;
-                        var joinedDays = DateTime.Now - joined;
-                        var activity = user.LastActivityAt;
-                        var online = user.LastOnlineAt;
-                        var avatar = user.AvatarUrl;
-                        await e.Channel.SendMessage($"```xl\n" +
-                                                         $"\nID:           {id}\n" +
-                                                         $"Username:     {username}\n" +
-                                                         $"Nickname:     {nickname}\n" +
-                                                         $"Joined:       {joined} ({joinedDays.Days} days ago)\n" +
-                                                         $"Last active:  {activity}\n" +
-                                                         $"Last online:  {online}\n" +
-                                                         $"```\nAvatar: {avatar}");
-                    }
-                    else
-                    {
-                        await e.Channel.SendMessage($"No user by the name of {mention} was found.");
-                    }
+                        user = e.Server.FindUsers(mention).FirstOrDefault();
+
+                    string username = user.Name;
+                    string nickname = user.Nickname;
+                    var joined = user.JoinedAt;
+                    var joinedDays = DateTime.Now - joined;
+                    var activity = user.LastActivityAt;
+                    var online = user.LastOnlineAt;
+                    var avatar = user.AvatarUrl;
+                    await e.Channel.SendMessage($"```xl\n" +
+                                                     $"\nID:           {id}\n" +
+                                                     $"Username:     {username}\n" +
+                                                     $"Nickname:     {nickname}\n" +
+                                                     $"Joined:       {joined} ({joinedDays.Days} days ago)\n" +
+                                                     $"Last active:  {activity}\n" +
+                                                     $"Last online:  {online}\n" +
+                                                     $"```\nAvatar: {avatar}");
                 }
             }
             else if ((e.Channel.Name == "op") && (!e.Message.RawText.Contains("op")) && (onlyOpToggle == true))
@@ -406,7 +408,7 @@ class Program
                 {
                     CommandsUsed++;
                     await e.Channel.SendMessage($"Heya! I'm SQU1RR3L, the general Discord bot written by Noahkiq. You can check out my command list with `^help` or check out my docs over at http://noahkiq.github.io/SQU1RR3L/. \n" +
-                                                $"The current bot version is **1.2.3**");
+                                                $"The current bot version is **1.2.4**");
                     //sends a message to channel with the given text
                 });
 
@@ -681,7 +683,7 @@ class Program
                         {
                             await e.Channel.SendMessage($"The tag system is used for less important commands, such as images or injokes. The list of them is here:\n" +
                                                         $"help, coo, wait, fightcary, kappa, qwerby, tantsalt, tantstop, doot, blacksanta, cupshots, delete, eminem, thatsthejoke, waterthose, autumnfox, shibae, taco, createtwow, riptwow, craftysevens, coyknee, carykh, powerabuse, carythetankengine, botespam, pasta, deletthis, tantalisa, spam, drawingrequest, patience, borntwerker, pinnedtwerking, itsjoke, staffping, tantdisgust, pit, thetruth, wonderifitwasturret\n" +
-                                                        $"Example command usage: *tag kappa");
+                                                        $"Example command usage: {commandPrefix}tag kappa");
                         });
 
             cgb.CreateCommand("coo")
