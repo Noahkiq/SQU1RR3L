@@ -328,12 +328,12 @@ class Program
                 });
 
         _client.GetService<CommandService>().CreateCommand("source") //create command
-                .Alias(new string[] { "git", "sourcecode", "github" }) //add aliases
+                .Alias(new string[] { "git", "sourcecode", "github", "docs", "documentation" }) //add aliases
                 .Description("Displays the bot's source code.") //add description, it will be shown when *help is used
                 .Do(async e =>
                 {
                     CommandsUsed++;
-                    await e.Channel.SendMessage($"You can check out the bot's source code at <https://github.com/Noahkiq/SQU1RR3L>.");
+					await e.Channel.SendMessage($"You can check out the bot's source code at <https://github.com/Noahkiq/SQU1RR3L> or view the bot's [outdated] documentation at <http://noahkiq.github.io/SQU1RR3L/>.");
                     //sends a message to channel with the given text
                 });
 
@@ -415,7 +415,7 @@ class Program
                 {
                     CommandsUsed++;
                     await e.Channel.SendMessage($"Heya! I'm SQU1RR3L, the general Discord bot written by Noahkiq. You can check out my command list with `^help` or check out my docs over at http://noahkiq.github.io/SQU1RR3L/. \n" +
-                                                $"The current bot version is **1.3.0**");
+                                                $"The current bot version is **1.3.1**");
                     //sends a message to channel with the given text
                 });
 
