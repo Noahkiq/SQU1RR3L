@@ -153,24 +153,30 @@ class Program
 							nickname = "[none]";
 
 						string game;
+						string status = user.Status.ToString();
+
 						if (user.CurrentGame == null)
 							game = "[none]";
 						else
-							game = user.CurrentGame.Value.ToString();
-
-						string status = user.Status.ToString();
+						{
+							game = user.CurrentGame.GetValueOrDefault().Name;
+							string streamUrl = user.CurrentGame.GetValueOrDefault().Url;
+							if (user.CurrentGame.GetValueOrDefault().Url != null)
+								status = $"streaming @ {streamUrl}";
+						}
+							
 						DateTime joined = user.JoinedAt;
 						var joinedDays = DateTime.Now - joined;
 						string avatar = user.AvatarUrl;
-						await e.Channel.SendMessage($"```xl\n" +
-							$"\nID:            {id}\n" +
-							$"Username:      {username}\n" +
-							$"Discriminator: {discrim}\n" +
-							$"Nickname:      {nickname}\n" +
-							$"Current game:  {game}\n" +
-							$"Status:        {status}\n" +
-							$"Joined:        {joined} ({joinedDays.Days} days ago)\n" +
-							$"```\nAvatar: {avatar}");
+						await e.Channel.SendMessage($"```ini\n" +
+							$"\n[ID]            {id}\n" +
+							$"[Username]      {username}\n" +
+							$"[Discriminator] {discrim}\n" +
+							$"[Nickname]      {nickname}\n" +
+							$"[Current game]  {game}\n" +
+							$"[Status]        {status}\n" +
+							$"[Joined]        {joined} ({joinedDays.Days} days ago)\n" +
+							$"[Avatar]        {avatar}\n```");
 					}
                 }
             }
@@ -442,7 +448,7 @@ class Program
 
         _client.GetService<CommandService>().CreateCommand("userinfo")
                 .Description("Displays info about a user.")
-                .Do(async e =>
+                .Do(e =>
                 {
                     CommandsUsed++;
                     // actual command shit is up abovee
