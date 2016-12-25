@@ -60,28 +60,6 @@ class Program
                     await e.Channel.SendMessage("eeEeEeeeeeEeEEeeEeEee");
                 }
             }
-            else if((e.Channel.Id == 229595785346416640) && (e.Message.Text.ToLower().StartsWith($"{commandPrefix}team")) && (!e.Message.IsAuthor))
-            {
-                var red = e.Server.GetRole(249738105483952128); // Grab 'Christmas Red' role
-                var green = e.Server.GetRole(249738118419185665); // Grab 'Christmas Green' role
-                var input = e.Message.Text.ToLower().Replace($"{commandPrefix}team ", ""); // Grabs input
-                if (string.IsNullOrWhiteSpace(input))
-                    await e.Channel.SendMessage($"{commandPrefix}team - Joins a certain team during special events. Usage: `{commandPrefix}team `red/green)`");
-                if ((e.User.HasRole(red)) || (e.User.HasRole(green))) // Tests if user is already in a team
-                    await e.Channel.SendMessage("You already picked a team!");
-                else if ((input == "red") || (input == "christmas red")) // Check if user wants red team
-                {
-                    await e.User.AddRoles(red); // Add user to red team
-                    await e.Channel.SendMessage($"You have successfully been added to the red team!"); // Print success message
-                }
-                else if ((input == "green") || (input == "christmas green")) // Check if user wants green team
-                {
-                    await e.User.AddRoles(green); // Add user to green team
-                    await e.Channel.SendMessage($"You have successfully been added to the green team!"); // Print success message
-                }
-                else
-                    await e.Channel.SendMessage($"Invalid input, must be either `red` or `green`."); // Print error if input was invalid
-            }
             if (e.Message.IsAuthor)
             {
                 if (e.Message.RawText == $"beepboop, calculating response time...")
@@ -117,63 +95,86 @@ class Program
                         await e.Message.Edit($"✂ scissors! We tied!");
                 }
             }
-            else if (e.Message.Text.StartsWith($"{commandPrefix}speak"))
-            {
-                string cleverbotUser = File.ReadLines("cleverbot.txt").Skip(0).Take(1).First();
-                string cleverbotKey = File.ReadLines("cleverbot.txt").Skip(1).Take(1).First();
-                var session = CleverbotSession.NewSession(cleverbotUser, cleverbotKey);
-                var response = session.Send(e.Message.Text.Replace($"{commandPrefix}speak ", ""));
-                await e.Channel.SendMessage($"{e.User.Mention}: {response}");
-            }
-            else if (e.Message.Text.StartsWith($"{commandPrefix}userinfo "))
+            // else if (e.Message.Text.StartsWith($"{commandPrefix}speak"))
+            // {
+            //     string cleverbotUser = File.ReadLines("cleverbot.txt").Skip(0).Take(1).First();
+            //     string cleverbotKey = File.ReadLines("cleverbot.txt").Skip(1).Take(1).First();
+            //     var session = CleverbotSession.NewSession(cleverbotUser, cleverbotKey);
+            //     var response = session.Send(e.Message.Text.Replace($"{commandPrefix}speak ", ""));
+            //     await e.Channel.SendMessage($"{e.User.Mention}: {response}");
+            // }
+            if (e.Message.Text.StartsWith($"{commandPrefix}userinfo"))
             {
                 if (!e.Channel.IsPrivate)
                 {
-                    string mention = e.Message.RawText.Replace($"{commandPrefix}userinfo ", "");
-                    User user = e.User;
-                    ulong id = user.Id;
+                    string mention = e.Message.RawText.Replace($"{commandPrefix}userinfo", "");
+					string input = null;
+					User user;       
                     if (e.Message.RawText.ToLower().Contains($"{commandPrefix}userinfo <@"))
                     {
                         string id1;
                         string id2;
+						ulong finalId;
                         if (mention.Contains("!"))
                         {
                             //id = ulong.Parse(mention.Split('!')[1].Split('>')[0]);
-                            id1 = mention.Replace($"<@!", "");
+                            id1 = mention.Replace($" <@!", "");
                             id2 = id1.Replace($">", "");
-                            id = Convert.ToUInt64(id2);
+                            finalId = Convert.ToUInt64(id2);
                         }
                         else
                         {
                             //id = ulong.Parse(mention.Split('@')[1].Split('>')[0]);
-                            id1 = mention.Replace($"<@", "");
+                            id1 = mention.Replace($" <@", "");
                             id2 = id1.Replace($">", "");
-                            id = Convert.ToUInt64(id2);
+                            finalId = Convert.ToUInt64(id2);
                         }
 
-                        user = e.Server.GetUser(id);
+                        user = e.Server.GetUser(finalId);
                     }
-                    else if (!string.IsNullOrWhiteSpace(mention))
-                        user = e.Server.FindUsers(mention).FirstOrDefault();
+					else if (!string.IsNullOrWhiteSpace(mention))
+					{
+						input = e.Message.RawText.Replace($"{commandPrefix}userinfo ", "");
+						user = e.Server.FindUsers(input).FirstOrDefault();
+					}
+					else
+						user = e.User;
 
-                    string username = user.Name;
-                    string nickname = user.Nickname;
-                    var joined = user.JoinedAt;
-                    var joinedDays = DateTime.Now - joined;
-                    var activity = user.LastActivityAt;
-                    var online = user.LastOnlineAt;
-                    var avatar = user.AvatarUrl;
-                    await e.Channel.SendMessage($"```xl\n" +
-                                                     $"\nID:           {id}\n" +
-                                                     $"Username:     {username}\n" +
-                                                     $"Nickname:     {nickname}\n" +
-                                                     $"Joined:       {joined} ({joinedDays.Days} days ago)\n" +
-                                                     $"Last active:  {activity}\n" +
-                                                     $"Last online:  {online}\n" +
-                                                     $"```\nAvatar: {avatar}");
+					if (user == null)
+						await e.Channel.SendMessage($"No user by the name of `{input}` could be found.");
+					else
+					{
+						ulong id = user.Id;
+						string username = user.Name;
+						string discrim = $"#{user.Discriminator}";
+
+						string nickname = user.Nickname;
+						if (string.IsNullOrWhiteSpace(nickname))
+							nickname = "[none]";
+
+						string game;
+						if (user.CurrentGame == null)
+							game = "[none]";
+						else
+							game = user.CurrentGame.Value.ToString();
+
+						string status = user.Status.ToString();
+						DateTime joined = user.JoinedAt;
+						var joinedDays = DateTime.Now - joined;
+						string avatar = user.AvatarUrl;
+						await e.Channel.SendMessage($"```xl\n" +
+							$"\nID:            {id}\n" +
+							$"Username:      {username}\n" +
+							$"Discriminator: {discrim}\n" +
+							$"Nickname:      {nickname}\n" +
+							$"Current game:  {game}\n" +
+							$"Status:        {status}\n" +
+							$"Joined:        {joined} ({joinedDays.Days} days ago)\n" +
+							$"```\nAvatar: {avatar}");
+					}
                 }
             }
-            else if ((e.Channel.Name == "op") && (!e.Message.RawText.Contains("op")) && (onlyOpToggle == true))
+			else if ((e.Channel.Name == "op") && (!e.Message.RawText.ToLower().Contains("op")) && (onlyOpToggle == true))
             {
                 await e.Message.Delete();
             }
@@ -408,7 +409,7 @@ class Program
                 {
                     CommandsUsed++;
                     await e.Channel.SendMessage($"Heya! I'm SQU1RR3L, the general Discord bot written by Noahkiq. You can check out my command list with `^help` or check out my docs over at http://noahkiq.github.io/SQU1RR3L/. \n" +
-                                                $"The current bot version is **1.2.4**");
+                                                $"The current bot version is **1.3.0**");
                     //sends a message to channel with the given text
                 });
 
@@ -444,23 +445,7 @@ class Program
                 .Do(async e =>
                 {
                     CommandsUsed++;
-                    if (!e.Channel.IsPrivate)
-                    {
-                        string mention = e.Message.Text;
-                        ulong id = e.User.Id;
-                        string username = e.User.Name;
-                        string avatar = e.User.AvatarUrl;
-                        string nickname = e.User.Nickname;
-                        var joined = e.User.JoinedAt;
-                        var joinedDays = DateTime.Now - joined;
-                        await e.Channel.SendMessage($"```\n" +
-                                                         $"\nID:           {id}\n" +
-                                                         $"Username:     {username}\n" +
-                                                         $"Nickname:     {nickname}\n" +
-                                                         $"Joined:       {joined} ({joinedDays.Days} days ago.)\n" +
-                                                         $"Avatar:\n```" +
-                                                         $"\n{avatar}\n");
-                    }
+                    // actual command shit is up abovee
                 });
 
         _client.GetService<CommandService>().CreateCommand("stats") //create command
