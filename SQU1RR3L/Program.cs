@@ -162,7 +162,7 @@ class Program
 							game = user.CurrentGame.GetValueOrDefault().Name;
 							string streamUrl = user.CurrentGame.GetValueOrDefault().Url;
 							if (user.CurrentGame.GetValueOrDefault().Url != null)
-								status = $"streaming @ {streamUrl}";
+								status = $"streaming # {streamUrl}";
 						}
 							
 						DateTime joined = user.JoinedAt;
@@ -176,10 +176,53 @@ class Program
 							$"[Current game]  {game}\n" +
 							$"[Status]        {status}\n" +
 							$"[Joined]        {joined} ({joinedDays.Days} days ago)\n" +
-							$"[Avatar]        {avatar}\n```");
+							$"[Avatar] {avatar}\n```");
 					}
                 }
             }
+			else if (e.Message.Text == $"{commandPrefix}serverinfo")
+			{
+				var Roles = e.Server.Roles;
+				List<string> rolesList = new List<string>();
+				foreach (Role role in Roles)
+					rolesList.Add(role.Name);
+
+				var CreationDate = DateTime.Now - e.Server.Owner.JoinedAt;
+				string rolesString = string.Join(", ", rolesList.ToArray());
+				string region = e.Server.Region.Name;
+
+				await e.Channel.SendMessage($"```ini\n" +
+					$"[Name]            {e.Server.Name}\n" +
+					$"[ID]              {e.Server.Id}\n" +
+					$"[User Count]      {e.Server.UserCount}\n" +
+					$"[Channel Count]   {e.Server.ChannelCount}\n" +
+					$"[Default Channel] #{e.Server.DefaultChannel}\n" +
+					$"[Role Count]      {e.Server.RoleCount}\n" +
+					$"[Roles]           {rolesString}\n" +
+					$"[Owner]           @{e.Server.Owner}\n" +
+					$"[Creation date]   {e.Server.Owner.JoinedAt} ({CreationDate.Days} days ago)\n" +
+					$"[Icon] {e.Server.IconUrl}\n" +
+					$"```");
+			}
+			else if (e.Message.Text == $"{commandPrefix}stats")
+			{
+				var servers = _client.Servers;
+				int serverCount = servers.Count();
+				int userCount = 0;
+				int channelCount = 0;
+				foreach(Server server in servers) {
+					userCount = userCount + server.UserCount;
+					channelCount = channelCount + server.ChannelCount;
+				}
+
+				await e.Channel.SendMessage($"```ini\n" +
+					$"[Uptime]        {DateTime.Now - StartupTime}\n" +
+					$"[Servers]       {serverCount}\n" +
+					$"[Channels]      {channelCount}\n" +
+					$"[Users]         {userCount}\n" +
+					$"[Commands Used] {CommandsUsed}\n" +
+					$"```");
+			}
 			else if ((e.Channel.Name == "op") && (!e.Message.RawText.ToLower().Contains("op")) && (onlyOpToggle == true))
             {
                 await e.Message.Delete();
@@ -415,7 +458,7 @@ class Program
                 {
                     CommandsUsed++;
                     await e.Channel.SendMessage($"Heya! I'm SQU1RR3L, the general Discord bot written by Noahkiq. You can check out my command list with `^help` or check out my docs over at http://noahkiq.github.io/SQU1RR3L/. \n" +
-                                                $"The current bot version is **1.3.1**");
+                                                $"The current bot version is **1.3.2**");
                     //sends a message to channel with the given text
                 });
 
@@ -456,32 +499,34 @@ class Program
 
         _client.GetService<CommandService>().CreateCommand("stats") //create command
                 .Description("Displays stats about the bot such as uptime and commands used.") //add description, it will be shown when *help is used
-                .Do(async e =>
+                .Do(e =>
                 {
                     CommandsUsed++;
-                    await e.Channel.SendMessage($"```xl\n" +
-                                                $"Uptime: {DateTime.Now - StartupTime} hours\n" +
-                                                $"Commands used: {CommandsUsed}\n" +
-                                                $"```");
+					// again, no shit here thnx monodevelop
                 });
+
+		_client.GetService<CommandService>().CreateCommand("toggleonlyop")
+			.Description("toggles op filter")
+			.Do(async e =>
+				{
+					if (onlyOpToggle == true)
+					{
+						await e.Channel.SendMessage("Toggled op filter off");
+						onlyOpToggle = false;
+					}
+					else if (onlyOpToggle == false)
+					{
+						await e.Channel.SendMessage("Toggled op filter on");
+						onlyOpToggle = true;
+					}
+				});
 
         _client.GetService<CommandService>().CreateCommand("serverinfo") //create command
                 .Description("Displays info about the server.") //add description, it will be shown when *help is used
-                .Do(async e =>
+                .Do(e =>
                 {
                     CommandsUsed++;
-                    var CreationDate = DateTime.Now - e.Server.Owner.JoinedAt;
-                    await e.Channel.SendMessage($"```xl\n" +
-                                                $"Name: {e.Server.Name}\n" +
-                                                $"ID: {e.Server.Id}\n" +
-                                                $"Users: {e.Server.UserCount}\n" +
-                                                $"Channels: {e.Server.ChannelCount}\n" +
-                                                $"Default channel: #{e.Server.DefaultChannel}\n" +
-                                                $"Roles: {e.Server.RoleCount}\n" +
-                                                $"Owner: @{e.Server.Owner}\n" +
-                                                $"Creation date: {e.Server.Owner.JoinedAt} ({CreationDate.Days} days ago.)" +
-                                                $"Icon:\n" +
-                                                $"```\n{e.Server.IconUrl}");
+					// no command shit here because fuck monodevelop
                 });
 
         _client.GetService<CommandService>().CreateCommand("rps") //create command
@@ -906,7 +951,7 @@ class Program
             // Send a message to the server's log channel, stating that a user was banned.
             if(logChannel != null)
             {
-                await logChannel.SendMessage($"{e.User.Name} was banned from the server.");
+				await logChannel.SendMessage($"{e.User.Name} ({e.User.Id}) was banned from the server.");
             }
         };
 
@@ -917,7 +962,7 @@ class Program
             // Send a message to the server's log channel, stating that a user was unbanned.
             if(logChannel != null)
             {
-                await logChannel.SendMessage($"{e.User.Name} was unbanned from the server.");
+				await logChannel.SendMessage($"{e.User.Name} ({e.User.Id}) was unbanned from the server.");
             }
         };
 
@@ -928,7 +973,7 @@ class Program
             // Send a message to the server's log channel, stating that a user was unbanned.
             if(logChannel != null)
             {
-                await logChannel.SendMessage($"{e.User.Name} joined the server.");
+				await logChannel.SendMessage($"{e.User.Name} ({e.User.Id}) joined the server.");
             }
         };
 
@@ -939,29 +984,15 @@ class Program
             // Send a message to the server's log channel, stating that a user was unbanned.
             if (logChannel != null)
             {
-                await logChannel.SendMessage($"{e.User.Name} left the server.");
+				await logChannel.SendMessage($"{e.User.Name} ({e.User.Id}) left the server.");
             }
         };
-        _client.GetService<CommandService>().CreateCommand("toggleonlyop")
-            .Description("toggles op filter")
-            .Do(async e =>
-            {
-                if (onlyOpToggle == true)
-                {
-                    await e.Channel.SendMessage("Toggled op filter off");
-                    onlyOpToggle = false;
-                }
-                else if (onlyOpToggle == false)
-                {
-                    await e.Channel.SendMessage("Toggled op filter on");
-                    onlyOpToggle = true;
-                }
-            });
 
         string token = File.ReadAllText("token.txt");
         _client.ExecuteAndWait(async () => {
             await _client.Connect(token, TokenType.Bot);
             _client.SetGame("^invite");
+			_client.SetStatus(UserStatus.DoNotDisturb);
         });
 
     }
