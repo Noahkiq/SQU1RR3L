@@ -10,8 +10,9 @@ namespace SQUIRRELv2
 		}
 		public static string clearformatting (string input)
 		{
-			// adds 0-width characters to the beginning of MD characters - ending is a mess because RTL char
-			var output = input.Replace("`", "​`").Replace("*", "​*").Replace("_", "​_").Replace("‮", "");
+			var output = "[empty string]";
+			if(!string.IsNullOrWhiteSpace(input))
+				output = input.Replace("`", "​`").Replace("*", "​*").Replace("_", "​_").Replace("‮", " ");
 			return output;
 		}
 	}

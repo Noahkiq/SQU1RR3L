@@ -192,9 +192,9 @@ class Program
 						string username = clearformatting(user.Name);
 						string discrim = $"#{user.Discriminator}";
 
-						string nickname = clearformatting(user.Nickname);
-						if (string.IsNullOrWhiteSpace(nickname))
-							nickname = "[none]";
+						string nickname = "[none]";
+						if (!string.IsNullOrWhiteSpace(user.Nickname))
+							nickname = clearformatting(user.Nickname);
 
 						string game;
 						string status = user.Status.ToString();
@@ -243,7 +243,7 @@ class Program
 					$"[Default Channel] #{e.Server.DefaultChannel}\n" +
 					$"[Role Count]      {e.Server.RoleCount}\n" +
 					$"[Roles]           {clearformatting(rolesString)}\n" +
-					$"[Owner]           @{clearformatting(e.Server.Owner.Name)}\n" +
+					$"[Owner]           @{clearformatting(e.Server.Owner.Name) + e.Server.Owner.Discriminator}\n" +
 					$"[Creation date]   {e.Server.Owner.JoinedAt} ({CreationDate.Days} days ago)\n" +
 					$"[Icon] {e.Server.IconUrl}\n" +
 					$"```");
@@ -502,7 +502,7 @@ class Program
 				{
 					CommandsUsed++;
 					await e.Channel.SendMessage($"Heya! I'm SQU1RR3L, the general Discord bot written by Noahkiq. You can check out my command list with `^help` or check out my docs over at http://noahkiq.github.io/SQU1RR3L/. \n" +
-						$"The current bot version is **1.3.3**");
+						$"The current bot version is **1.3.3.1**");
 					//sends a message to channel with the given text
 				});
 
@@ -1196,8 +1196,9 @@ class Program
 
 	public static string clearformatting (string input)
 	{
-		// adds 0-width characters to the beginning of MD characters - ending is a mess because RTL char
-		var output = input.Replace("`", "​`").Replace("*", "​*").Replace("_", "​_").Replace("‮", "");
+		var output = "[empty string]";
+		if(!string.IsNullOrWhiteSpace(input))
+		    output = input.Replace("`", "​`").Replace("*", "​*").Replace("_", "​_").Replace("‮", " ");
 		return output;
 	}
 
